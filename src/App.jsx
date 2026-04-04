@@ -403,7 +403,7 @@ function App() {
                     
                     <div className="mode-selector-wrapper">
                       <div className="mode-selector glass">
-                        {['All', 'XI-F2', 'XII-F2'].map(f => (
+                        {['All', 'XI-F2', 'XII-F2', 'Anggota', 'Penghargaan', 'Video'].map(f => (
                           <button 
                             key={f}
                             onClick={() => setFilter(f)}
@@ -421,6 +421,7 @@ function App() {
                         ))}
                       </div>
                     </div>
+
 
 
                     {fetchError && (
@@ -697,7 +698,7 @@ function AdminPanel({ addPhoto, photos, deletePhoto, loading }) {
           </h3>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Pilih Kelas</label>
+              <label>Pilih Kategori</label>
               <select 
                 className="form-input"
                 value={newPhoto.class}
@@ -705,8 +706,12 @@ function AdminPanel({ addPhoto, photos, deletePhoto, loading }) {
               >
                 <option value="XI-F2">XI-F2</option>
                 <option value="XII-F2">XII-F2</option>
+                <option value="Anggota">Anggota</option>
+                <option value="Penghargaan">Penghargaan</option>
+                <option value="Video">Video</option>
               </select>
             </div>
+
             
             <div className="form-group">
               <label>Keterangan / Caption</label>
