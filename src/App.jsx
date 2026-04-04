@@ -229,49 +229,59 @@ function LandingPage({ visitor, setVisitor, onConfirm, setIsLoginModalOpen }) {
       <div className="book-container">
         <div className="book-content">
           <h2 className="book-title">Buku Reservasi Kelas</h2>
-          <div className="attendance-grid">
-            <div className="form-group">
-              <label style={{color: '#5d4037', fontWeight: '600'}}>Nama Lengkap / Absen</label>
-              <input 
-                type="text" 
-                className="attendance-input" 
-                placeholder="Tulis namamu di sini..."
-                value={visitor.name}
-                onChange={(e) => setVisitor({...visitor, name: e.target.value})}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label style={{color: '#5d4037', fontWeight: '600'}}>Foto Profil (Opsional)</label>
-              <div className="attendance-photo-upload" onClick={() => document.getElementById('visitorPhoto').click()}>
-                {visitor.photo ? (
-                  <img src={visitor.photo} alt="visitor" />
-                ) : (
-                  <>
-                    <Camera size={32} color="#5d4037" style={{opacity: 0.5}} />
-                    <p style={{color: '#5d4037', fontSize: '0.8rem', marginTop: '0.5rem'}}>Klik untuk pas foto</p>
-                  </>
-                )}
-                <input type="file" id="visitorPhoto" hidden onChange={handlePhotoUpload} accept="image/*" />
+          <div className="book-spread">
+            {/* Left Page */}
+            <div className="attendance-grid">
+              <div className="form-group">
+                <label className="attendance-label">Nama Lengkap / Absen</label>
+                <input 
+                  type="text" 
+                  className="attendance-input" 
+                  placeholder="Tulis namamu di sini..."
+                  value={visitor.name}
+                  onChange={(e) => setVisitor({...visitor, name: e.target.value})}
+                />
               </div>
+              <p style={{fontSize: '0.9rem', color: '#8d6e63', fontStyle: 'italic', marginTop: '1rem'}}>
+                "Setiap nama punya cerita, setiap cerita punya kenangan."
+              </p>
             </div>
 
-            <button className="checkmark-btn" onClick={onConfirm}>
-              <Check size={32} />
-            </button>
-            <p style={{textAlign: 'center', fontSize: '0.8rem', color: '#888'}}>Klik centang untuk masuk ke memory twelvetwo</p>
+            {/* Right Page */}
+            <div className="attendance-grid">
+              <div className="form-group">
+                <label className="attendance-label">Foto Profil (Opsional)</label>
+                <div className="attendance-photo-upload" onClick={() => document.getElementById('visitorPhoto').click()}>
+                  {visitor.photo ? (
+                    <img src={visitor.photo} alt="visitor" />
+                  ) : (
+                    <>
+                      <Camera size={32} color="#5d4037" style={{opacity: 0.5}} />
+                      <p style={{color: '#5d4037', fontSize: '0.8rem', marginTop: '0.5rem'}}>Klik untuk pas foto</p>
+                    </>
+                  )}
+                  <input type="file" id="visitorPhoto" hidden onChange={handlePhotoUpload} accept="image/*" />
+                </div>
+              </div>
+
+              <button className="checkmark-btn" onClick={onConfirm}>
+                <Check size={32} />
+              </button>
+              <p style={{textAlign: 'center', fontSize: '0.8rem', color: '#888', marginTop: '1rem'}}>Tanda tangani untuk masuk</p>
+            </div>
           </div>
           
           <button 
             onClick={() => setIsLoginModalOpen(true)}
             style={{
               position: 'absolute', bottom: '1rem', right: '1rem', 
-              background: 'none', border: 'none', color: '#ddd', cursor: 'pointer'
+              background: 'none', border: 'none', color: 'rgba(0,0,0,0.1)', cursor: 'pointer'
             }}
           >
             <Shield size={16} />
           </button>
         </div>
+
       </div>
     </motion.div>
   )

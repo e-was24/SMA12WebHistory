@@ -235,8 +235,8 @@ nav {
 
 
 .book-container {
-  width: 100%;
-  max-width: 650px;
+  width: 95%;
+  max-width: 1200px; /* Increased for spread look */
   perspective: 2000px;
   animation: bookAppear 1.2s cubic-bezier(0.22, 1, 0.36, 1);
   display: flex;
@@ -245,13 +245,13 @@ nav {
 
 .book-content {
   width: 100%;
-  max-height: 85vh;
+  max-height: 90vh;
   background: #fcfaf2;
   background-image: 
     linear-gradient(to right, rgba(0,0,0,0.05) 0%, transparent 5%, transparent 95%, rgba(0,0,0,0.05) 100%),
     url('https://www.transparenttextures.com/patterns/paper-fibers.png');
   color: #3e2723;
-  padding: 3rem 4rem;
+  padding: 4rem;
   border-radius: 4px 12px 12px 4px;
   box-shadow: 
     -15px 0 30px rgba(0,0,0,0.6),
@@ -263,26 +263,23 @@ nav {
   flex-direction: column;
 }
 
-/* Custom Scrollbar for the Book */
-.book-content::-webkit-scrollbar {
-  width: 5px;
+.book-spread {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
 }
-.book-content::-webkit-scrollbar-thumb {
-  background: rgba(62, 39, 35, 0.2);
-  border-radius: 10px;
-}
-
 
 .book-content::after {
   content: '';
   position: absolute;
   top: 0;
-  left: 30px;
-  width: 1px;
+  left: 50%;
+  width: 2px;
   height: 100%;
-  background: rgba(0,0,0,0.1);
+  background: linear-gradient(transparent, rgba(0,0,0,0.1), transparent);
+  transform: translateX(-50%);
 }
-
 
 .book-title {
   font-family: 'Playfair Display', serif;
@@ -294,7 +291,9 @@ nav {
   border-bottom: 1px double rgba(62, 39, 35, 0.2);
   letter-spacing: 0.05rem;
   font-style: italic;
+  grid-column: span 2;
 }
+
 
 /* Intro / Loading Styles */
 .intro-container {
@@ -473,9 +472,19 @@ nav {
     margin-top: 2rem;
   }
 
+  .book-spread {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .book-content::after {
+    display: none; /* Hide center line on mobile */
+  }
+
   .gallery-header h1 {
     font-size: 2.2rem;
   }
+
 
 
   .intro-logo {
