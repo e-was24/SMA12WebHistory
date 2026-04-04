@@ -13,35 +13,55 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey)
 const playShutterSound = () => {
   try {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-    const osc1 = audioCtx.createOscillator()
-    const gain1 = audioCtx.createGain()
-    osc1.type = 'triangle'
-    osc1.frequency.setValueAtTime(150, audioCtx.currentTime)
-    osc1.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1)
-    gain1.gain.setValueAtTime(0.3, audioCtx.currentTime)
-    gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1)
-    osc1.connect(gain1)
-    gain1.connect(audioCtx.destination)
+    const now = audioCtx.currentTime
     
-    const noiseSize = audioCtx.sampleRate * 0.05
-    const noiseBuffer = audioCtx.createBuffer(1, noiseSize, audioCtx.sampleRate)
-    const output = noiseBuffer.getChannelData(0)
-    for (let i = 0; i < noiseSize; i++) {
-      output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (noiseSize / 2))
+    // 1. Mirror Flip (Low 'thud')
+    const mirror = audioCtx.createOscillator()
+    const mirrorGain = audioCtx.createGain()
+    mirror.type = 'sine'
+    mirror.frequency.setValueAtTime(100, now)
+    mirror.frequency.exponentialRampToValueAtTime(40, now + 0.05)
+    mirrorGain.gain.setValueAtTime(0.2, now)
+    mirrorGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05)
+    mirror.connect(mirrorGain)
+    mirrorGain.connect(audioCtx.destination)
+    
+    // 2. Main Shutter Curtain (Crispy 'clack')
+    const bufferSize = audioCtx.sampleRate * 0.08
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate)
+    const data = buffer.getChannelData(0)
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize / 4))
     }
-    const noiseSource = audioCtx.createBufferSource()
-    noiseSource.buffer = noiseBuffer
-    const highPass = audioCtx.createBiquadFilter()
-    highPass.type = 'highpass'
-    highPass.frequency.value = 2000
-    noiseSource.connect(highPass)
-    highPass.connect(audioCtx.destination)
+    const noise = audioCtx.createBufferSource()
+    noise.buffer = buffer
+    const filter = audioCtx.createBiquadFilter()
+    filter.type = 'highpass'
+    filter.frequency.value = 3000
+    noise.connect(filter)
+    filter.connect(audioCtx.destination)
     
-    osc1.start()
-    noiseSource.start()
-    osc1.stop(audioCtx.currentTime + 0.15)
+    // 3. Mechanical 'Metallic' ring
+    const ring = audioCtx.createOscillator()
+    const ringGain = audioCtx.createGain()
+    ring.type = 'triangle'
+    ring.frequency.setValueAtTime(800, now)
+    ringGain.gain.setValueAtTime(0.1, now)
+    ringGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03)
+    ring.connect(ringGain)
+    ringGain.connect(audioCtx.destination)
+
+    // Fire sequence
+    mirror.start(now)
+    noise.start(now + 0.01)
+    ring.start(now + 0.01)
+    
+    mirror.stop(now + 0.05)
+    noise.stop(now + 0.1)
+    ring.stop(now + 0.04)
   } catch (e) { console.warn(e) }
 }
+
 
 function App() {
   const [view, setView] = useState('landing') // 'landing', 'intro', 'gallery', 'admin'
