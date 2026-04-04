@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Camera, Shield, LogOut, Trash2, Plus, Image as ImageIcon, X, Check } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@supabase/supabase-js'
+import { PDDLogo } from './components/PDDLogo'
+
 
 // Initialize Supabase Client
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
@@ -677,14 +679,14 @@ function InitialSplash({ onComplete }) {
       transition={{ duration: 1 }}
       className="splash-screen"
     >
-      <motion.img 
+      <motion.div 
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
-        src="/pdd-logo.png" 
-        className="splash-logo" 
-        alt="PDD Logo" 
-      />
+      >
+        <PDDLogo />
+      </motion.div>
+
       <motion.div 
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
