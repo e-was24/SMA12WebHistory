@@ -693,7 +693,7 @@ function InitialSplash({ onComplete }) {
         transition={{ delay: 0.8, duration: 1 }}
         className="splash-text"
       >
-        <p className="splash-credit">Dibuat oleh PDD Dian</p>
+        <p className="splash-credit">Dibuat oleh PDD Dan</p>
         <h1 className="splash-brand">Dipersembahkan oleh TWELVETWO</h1>
       </motion.div>
     </motion.div>
