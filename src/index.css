@@ -216,3 +216,146 @@ nav {
   border-color: var(--primary);
   background: rgba(255, 255, 255, 0.1);
 }
+
+/* Landing / Book styles */
+.landing-page {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+}
+
+.book-container {
+  width: 90%;
+  max-width: 600px;
+  perspective: 1500px;
+}
+
+.book-content {
+  background: #fefcf0;
+  color: #2d3436;
+  padding: 3rem;
+  border-radius: 4px;
+  box-shadow: 20px 20px 60px rgba(0,0,0,0.5);
+  position: relative;
+  border-left: 15px solid #5d4037;
+  min-height: 400px;
+}
+
+.book-title {
+  font-family: 'Georgia', serif;
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid rgba(0,0,0,0.05);
+  padding-bottom: 1rem;
+  color: #5d4037;
+}
+
+/* Intro / Loading Styles */
+.intro-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  z-index: 1000;
+}
+
+.intro-logo {
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: 0.5rem;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  background: linear-gradient(to right, #ffffff, #6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: white; /* fallback */
+}
+
+.progress-container {
+  width: 300px;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--primary);
+  width: 0%;
+  transition: width 0.05s linear;
+}
+
+.checkmark-btn {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #27ae60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin: 2rem auto;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.checkmark-btn:hover {
+  transform: scale(1.15);
+}
+
+.checkmark-btn:active {
+  transform: scale(0.9);
+}
+
+.attendance-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.attendance-input {
+  border: none;
+  border-bottom: 2px solid rgba(0,0,0,0.1);
+  background: transparent;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  font-family: inherit;
+  outline: none;
+  color: #333;
+}
+
+.attendance-input:focus {
+  border-bottom-color: var(--primary);
+}
+
+.attendance-photo-upload {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px dashed rgba(0,0,0,0.1);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  background: rgba(0,0,0,0.02);
+}
+
+.attendance-photo-upload img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+

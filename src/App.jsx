@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react'
-import { Camera, Shield, LogOut, Trash2, Plus, Image as ImageIcon, X, Filter } from 'lucide-react'
+import { Camera, Shield, LogOut, Trash2, Plus, Image as ImageIcon, X, Filter, Check } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 function App() {
-  const [view, setView] = useState('gallery') // 'gallery' or 'admin'
+  const [view, setView] = useState('landing') // 'landing', 'intro', 'gallery', 'admin'
   const [isAdmin, setIsAdmin] = useState(false)
   const [photos, setPhotos] = useState([])
   const [filter, setFilter] = useState('All')
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [password, setPassword] = useState('')
+  const [visitor, setVisitor] = useState({ name: '', photo: null })
 
   useEffect(() => {
     const savedPhotos = localStorage.getItem('class_gallery_photos')
@@ -23,7 +24,7 @@ function App() {
 
   const handleLogin = (e) => {
     e.preventDefault()
-    if (password === 'admin123') { // Simple password for now
+    if (password === 'admin123') {
       setIsAdmin(true)
       setIsLoginModalOpen(false)
       setView('admin')
@@ -31,6 +32,11 @@ function App() {
     } else {
       alert('Password salah!')
     }
+  }
+
+  const startIntro = () => {
+    if (!visitor.name) return alert('Mohon isi nama Anda di buku reservasi!')
+    setView('intro')
   }
 
   const addPhoto = (newPhoto) => {
@@ -49,85 +55,116 @@ function App() {
 
   return (
     <div className="app-wrapper">
-      <nav>
-        <div className="container nav-content">
-          <div className="brand" onClick={() => setView('gallery')} style={{cursor: 'pointer'}}>
-            SMA 12 HISTORY
-          </div>
-          <div className="nav-links" style={{display: 'flex', gap: '1rem'}}>
-            <button className="btn btn-outline" onClick={() => setView('gallery')}>
-              Gallery
-            </button>
-            {isAdmin ? (
-              <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
-                <button className="btn btn-primary" onClick={() => setView('admin')}>
-                  Admin Panel
-                </button>
-                <button className="btn btn-outline" onClick={() => setIsAdmin(false)}>
-                  <LogOut size={18} />
-                </button>
-              </div>
-            ) : (
-              <button className="btn btn-outline" onClick={() => setIsLoginModalOpen(true)}>
-                <Shield size={18} /> Admin
-              </button>
-            )}
-          </div>
-        </div>
-      </nav>
-
-      <main className="container">
-        {view === 'gallery' ? (
-          <section className="fade-in">
-            <header className="gallery-header">
-              <h1>Memory Keanggotaan</h1>
-              <p style={{color: 'var(--text-muted)'}}>Kumpulan kenangan indah dari kelas XI-F2 hingga XII-F2</p>
-              
-              <div className="filter-group">
-                {['All', 'XI-F2', 'XII-F2'].map(f => (
-                  <button 
-                    key={f}
-                    onClick={() => setFilter(f)}
-                    className={`btn ${filter === f ? 'btn-primary' : 'btn-outline'}`}
-                  >
-                    {f}
-                  </button>
-                ))}
-              </div>
-            </header>
-
-            <div className="grid">
-              <AnimatePresence>
-                {filteredPhotos.map((photo) => (
-                  <motion.div 
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    key={photo.id} 
-                    className="photo-card glass"
-                  >
-                    <img src={photo.url} alt={photo.caption} />
-                    <div className="photo-info">
-                      <span style={{fontSize: '0.8rem', color: 'var(--accent)'}}>{photo.class}</span>
-                      <p style={{fontWeight: '600'}}>{photo.caption}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-            
-            {filteredPhotos.length === 0 && (
-              <div style={{textAlign: 'center', padding: '4rem', color: 'var(--text-muted)'}}>
-                <ImageIcon size={48} style={{marginBottom: '1rem', opacity: 0.5}} />
-                <p>Belum ada foto. Unggah sekarang melalui panel admin!</p>
-              </div>
-            )}
-          </section>
-        ) : (
-          <AdminPanel addPhoto={addPhoto} photos={photos} deletePhoto={deletePhoto} />
+      <AnimatePresence mode="wait">
+        {view === 'landing' && (
+          <LandingPage visitor={visitor} setVisitor={setVisitor} onConfirm={startIntro} setIsLoginModalOpen={setIsLoginModalOpen} />
         )}
-      </main>
+
+        {view === 'intro' && (
+          <IntroSequence onComplete={() => setView('gallery')} />
+        )}
+
+        {(view === 'gallery' || view === 'admin') && (
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            key="main-content"
+          >
+            <nav>
+              <div className="container nav-content">
+                <div className="brand" onClick={() => setView('gallery')} style={{cursor: 'pointer'}}>
+                  TWELVETWO
+                </div>
+                <div className="nav-links" style={{display: 'flex', gap: '1rem'}}>
+                  <button className="btn btn-outline" onClick={() => setView('gallery')}>
+                    Gallery
+                  </button>
+                  {isAdmin ? (
+                    <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
+                      <button className="btn btn-primary" onClick={() => setView('admin')}>
+                        Admin Panel
+                      </button>
+                      <button className="btn btn-outline" onClick={() => setIsAdmin(false)}>
+                        <LogOut size={18} />
+                      </button>
+                    </div>
+                  ) : (
+                    <button className="btn btn-outline" onClick={() => setIsLoginModalOpen(true)}>
+                      <Shield size={18} /> Admin
+                    </button>
+                  )}
+                </div>
+              </div>
+            </nav>
+
+            <main className="container">
+              {view === 'gallery' ? (
+                <section className="fade-in">
+                  <header className="gallery-header">
+                    <motion.h1 
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      Our Precious Memories
+                    </motion.h1>
+                    <motion.p 
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                      style={{color: 'var(--text-muted)'}}
+                    >
+                      Selamat datang, {visitor.name}. Nikmati momen terbaik kami.
+                    </motion.p>
+                    
+                    <div className="filter-group">
+                      {['All', 'XI-F2', 'XII-F2'].map(f => (
+                        <button 
+                          key={f}
+                          onClick={() => setFilter(f)}
+                          className={`btn ${filter === f ? 'btn-primary' : 'btn-outline'}`}
+                        >
+                          {f}
+                        </button>
+                      ))}
+                    </div>
+                  </header>
+
+                  <div className="grid">
+                    <AnimatePresence>
+                      {filteredPhotos.map((photo) => (
+                        <motion.div 
+                          layout
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.9 }}
+                          key={photo.id} 
+                          className="photo-card glass"
+                        >
+                          <img src={photo.url} alt={photo.caption} />
+                          <div className="photo-info">
+                            <span style={{fontSize: '0.8rem', color: 'var(--accent)'}}>{photo.class}</span>
+                            <p style={{fontWeight: '600'}}>{photo.caption}</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                  
+                  {filteredPhotos.length === 0 && (
+                    <div style={{textAlign: 'center', padding: '4rem', color: 'var(--text-muted)'}}>
+                      <ImageIcon size={48} style={{marginBottom: '1rem', opacity: 0.5}} />
+                      <p>Belum ada foto. Unggah sekarang melalui panel admin!</p>
+                    </div>
+                  )}
+                </section>
+              ) : (
+                <AdminPanel addPhoto={addPhoto} photos={photos} deletePhoto={deletePhoto} />
+              )}
+            </main>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Login Modal */}
       <AnimatePresence>
@@ -168,6 +205,110 @@ function App() {
           </div>
         )}
       </AnimatePresence>
+    </div>
+  )
+}
+
+function LandingPage({ visitor, setVisitor, onConfirm, setIsLoginModalOpen }) {
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => setVisitor({ ...visitor, photo: reader.result })
+      reader.readAsDataURL(file)
+    }
+  }
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }}
+      className="landing-page"
+    >
+      <div className="book-container">
+        <div className="book-content">
+          <h2 className="book-title">Buku Reservasi Kelas</h2>
+          <div className="attendance-grid">
+            <div className="form-group">
+              <label style={{color: '#5d4037', fontWeight: '600'}}>Nama Lengkap / Absen</label>
+              <input 
+                type="text" 
+                className="attendance-input" 
+                placeholder="Tulis namamu di sini..."
+                value={visitor.name}
+                onChange={(e) => setVisitor({...visitor, name: e.target.value})}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label style={{color: '#5d4037', fontWeight: '600'}}>Foto Profil (Opsional)</label>
+              <div className="attendance-photo-upload" onClick={() => document.getElementById('visitorPhoto').click()}>
+                {visitor.photo ? (
+                  <img src={visitor.photo} alt="visitor" />
+                ) : (
+                  <>
+                    <Camera size={32} color="#5d4037" style={{opacity: 0.5}} />
+                    <p style={{color: '#5d4037', fontSize: '0.8rem', marginTop: '0.5rem'}}>Klik untuk pas foto</p>
+                  </>
+                )}
+                <input type="file" id="visitorPhoto" hidden onChange={handlePhotoUpload} accept="image/*" />
+              </div>
+            </div>
+
+            <button className="checkmark-btn" onClick={onConfirm}>
+              <Check size={32} />
+            </button>
+            <p style={{textAlign: 'center', fontSize: '0.8rem', color: '#888'}}>Klik centang untuk masuk ke memory twelvetwo</p>
+          </div>
+          
+          <button 
+            onClick={() => setIsLoginModalOpen(true)}
+            style={{
+              position: 'absolute', bottom: '1rem', right: '1rem', 
+              background: 'none', border: 'none', color: '#ddd', cursor: 'pointer'
+            }}
+          >
+            <Shield size={16} />
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+function IntroSequence({ onComplete }) {
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(timer)
+          setTimeout(onComplete, 500)
+          return 100
+        }
+        return prev + 2
+      })
+    }, 40)
+    return () => clearInterval(timer)
+  }, [onComplete])
+
+  return (
+    <div className="intro-container">
+      <motion.div 
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        className="intro-logo"
+      >
+        TWELVETWO
+      </motion.div>
+      <div className="progress-container">
+        <div className="progress-bar-fill" style={{ width: `${progress}%` }}></div>
+      </div>
+      <p style={{marginTop: '1rem', fontSize: '0.8rem', letterSpacing: '0.2rem', color: 'var(--text-muted)'}}>
+        LOADING MEMORIES...
+      </p>
     </div>
   )
 }
