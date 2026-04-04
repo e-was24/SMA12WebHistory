@@ -66,6 +66,30 @@ function App() {
     setView('intro')
   }
 
+  // Optimized image compression
+  const compressImage = (base64, maxWidth = 1200) => {
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.src = base64
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        let width = img.width
+        let height = img.height
+
+        if (width > maxWidth) {
+          height = (maxWidth / width) * height
+          width = maxWidth
+        }
+
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
+        resolve(canvas.toDataURL('image/jpeg', 0.8)) // 0.8 quality
+      }
+    })
+  }
+
   // Helper to convert base64 to File
   const base64ToFile = (base64, filename) => {
     const arr = base64.split(',')
@@ -82,12 +106,22 @@ function App() {
   const addPhoto = async (newPhotoData) => {
     try {
       setLoading(true)
-      const file = base64ToFile(newPhotoData.url, `${Date.now()}.png`)
+      
+      // 0. Compress Image before upload
+      const compressedBase64 = await compressImage(newPhotoData.url)
+      const file = base64ToFile(compressedBase64, `${Date.now()}.jpg`)
+
+      // Check size limit (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error('Ukuran foto terlalu besar. Silakan kompres foto Anda.')
+      }
       
       // 1. Upload to Storage
       const { data: storageData, error: storageError } = await supabase.storage
         .from('class-photos')
-        .upload(`gallery/${file.name}`, file)
+        .upload(`gallery/${file.name}`, file, {
+          contentType: 'image/jpeg'
+        })
 
       if (storageError) throw storageError
 
@@ -322,6 +356,7 @@ function LandingPage({ visitor, setVisitor, onConfirm, setIsLoginModalOpen }) {
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0]
     if (file) {
+      if (file.size > 10 * 1024 * 1024) return alert('File terlalu besar! Maksimal 10MB.')
       const reader = new FileReader()
       reader.onloadend = () => setVisitor({ ...visitor, photo: reader.result })
       reader.readAsDataURL(file)
@@ -458,6 +493,7 @@ function AdminPanel({ addPhoto, photos, deletePhoto, loading }) {
   const handleFileChange = (e) => {
     const file = e.target.files[0]
     if (file) {
+      if (file.size > 10 * 1024 * 1024) return alert('File terlalu besar! Maksimal 10MB.')
       const reader = new FileReader()
       reader.onloadend = () => {
         setNewPhoto({ ...newPhoto, url: reader.result })
@@ -509,6 +545,7 @@ function AdminPanel({ addPhoto, photos, deletePhoto, loading }) {
                   setDragging(false)
                   const file = e.dataTransfer.files[0]
                   if (file) {
+                    if (file.size > 10 * 1024 * 1024) return alert('File terlalu besar! Maksimal 10MB.')
                     const reader = new FileReader()
                     reader.onloadend = () => setNewPhoto({...newPhoto, url: reader.result})
                     reader.readAsDataURL(file)
