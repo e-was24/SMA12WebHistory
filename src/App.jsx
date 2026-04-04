@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react'
-import { Camera, Shield, LogOut, Trash2, Plus, Image as ImageIcon, X, Check } from 'lucide-react'
+import { 
+  Camera, 
+  Upload, 
+  LogOut, 
+  Shield, 
+  X, 
+  ChevronLeft, 
+  ChevronRight, 
+  Trash2,
+  Sliders
+} from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@supabase/supabase-js'
 import { PDDLogo } from './components/PDDLogo'
@@ -69,6 +79,8 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isFlashing, setIsFlashing] = useState(false)
+  const [isFilterExpanded, setIsFilterExpanded] = useState(false)
+
 
 
 
@@ -324,7 +336,8 @@ function App() {
                 {/* Mobile Navigation (PDD Menu) */}
                 <div className="nav-mobile">
                   <motion.button 
-                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ rotate: 15, scale: 1.1 }}
+                    whileTap={{ scale: 0.8, rotate: -15 }}
                     className="camera-menu-btn"
                     onClick={() => {
                       setIsFlashing(true)
@@ -336,6 +349,7 @@ function App() {
                     <span className="pdd-label">PDD</span>
                   </motion.button>
                 </div>
+
               </div>
 
               {/* PDD Menu Overlay (Mobile Only) */}
@@ -401,26 +415,54 @@ function App() {
                       Selamat datang, {visitor.name}. Kenangan ini tersimpan di Cloud.
                     </motion.p>
                     
+  const [isFilterExpanded, setIsFilterExpanded] = useState(false)
+
+  // ... (inside return)
                     <div className="mode-selector-wrapper">
-                      <div className="mode-selector glass">
-                        {['All', 'XI-F2', 'XII-F2', 'Anggota', 'Penghargaan', 'Video'].map(f => (
-                          <button 
-                            key={f}
-                            onClick={() => setFilter(f)}
-                            className={`mode-btn ${filter === f ? 'active' : ''}`}
-                          >
-                            {filter === f && (
-                              <motion.div 
-                                layoutId="mode-bg"
-                                className="mode-bg"
-                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                              />
-                            )}
-                            <span className="mode-text">{f}</span>
-                          </button>
-                        ))}
+                      {/* Mobile Category Toggle (SVG Toggle) */}
+                      <div className="mobile-filter-trigger">
+                        <motion.button 
+                          whileTap={{ scale: 0.9 }}
+                          className={`filter-toggle-btn glass ${isFilterExpanded ? 'active' : ''}`}
+                          onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+                        >
+                          <Sliders size={20} />
+                          <span>Filter Mode</span>
+                        </motion.button>
                       </div>
+
+                      <AnimatePresence>
+                        {(!isMenuOpen && (window.innerWidth > 768 || isFilterExpanded)) && (
+                          <motion.div 
+                            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                            className="mode-selector glass"
+                          >
+                            {['All', 'XI-F2', 'XII-F2', 'Anggota', 'Penghargaan', 'Video'].map(f => (
+                              <button 
+                                key={f}
+                                onClick={() => {
+                                  setFilter(f)
+                                  if (window.innerWidth <= 768) setIsFilterExpanded(false)
+                                }}
+                                className={`mode-btn ${filter === f ? 'active' : ''}`}
+                              >
+                                {filter === f && (
+                                  <motion.div 
+                                    layoutId="mode-bg"
+                                    className="mode-bg"
+                                    transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                                  />
+                                )}
+                                <span className="mode-text">{f}</span>
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
+
 
 
 
