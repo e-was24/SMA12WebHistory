@@ -10,7 +10,9 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 function App() {
   const [view, setView] = useState('landing') // 'landing', 'intro', 'gallery', 'admin'
+  const [showSplash, setShowSplash] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
+
   const [photos, setPhotos] = useState([])
   const [filter, setFilter] = useState('All')
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
@@ -223,9 +225,15 @@ function App() {
   return (
     <div className="app-wrapper">
       <AnimatePresence mode="wait">
-        {view === 'landing' && (
+        {showSplash && (
+          <InitialSplash key="splash" onComplete={() => setShowSplash(false)} />
+        )}
+
+        {!showSplash && view === 'landing' && (
           <LandingPage visitor={visitor} setVisitor={setVisitor} onConfirm={startIntro} setIsLoginModalOpen={setIsLoginModalOpen} />
         )}
+// ... (rest of the conditions)
+
 
         {view === 'intro' && (
           <IntroSequence photos={photos} onComplete={() => setView('gallery')} />
@@ -656,4 +664,39 @@ function AdminPanel({ addPhoto, photos, deletePhoto, loading }) {
   )
 }
 
+function InitialSplash({ onComplete }) {
+  useEffect(() => {
+    const timer = setTimeout(onComplete, 3500) // Show for 3.5 seconds
+    return () => clearTimeout(timer)
+  }, [onComplete])
+
+  return (
+    <motion.div 
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }}
+      className="splash-screen"
+    >
+      <motion.img 
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        src="/pdd-logo.png" 
+        className="splash-logo" 
+        alt="PDD Logo" 
+      />
+      <motion.div 
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.8, duration: 1 }}
+        className="splash-text"
+      >
+        <p className="splash-credit">Dibuat oleh PDD Dian</p>
+        <h1 className="splash-brand">Dipersembahkan oleh TWELVETWO</h1>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 export default App
+
