@@ -463,7 +463,8 @@ nav {
 }
 
 .splash-credit {
-  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.7rem, 2vw, 0.9rem);
   letter-spacing: 0.2rem;
   opacity: 0.6;
   text-transform: uppercase;
@@ -471,14 +472,16 @@ nav {
 }
 
 .splash-brand {
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.4rem;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.2rem, 4vw, 2rem);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5rem;
+  letter-spacing: 0.6rem;
   color: var(--accent);
   margin-top: 0.5rem;
+  line-height: 1.4;
 }
+
 
 
 
