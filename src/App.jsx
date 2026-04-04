@@ -61,7 +61,7 @@ function App() {
         )}
 
         {view === 'intro' && (
-          <IntroSequence onComplete={() => setView('gallery')} />
+          <IntroSequence photos={photos} onComplete={() => setView('gallery')} />
         )}
 
         {(view === 'gallery' || view === 'admin') && (
@@ -277,39 +277,55 @@ function LandingPage({ visitor, setVisitor, onConfirm, setIsLoginModalOpen }) {
   )
 }
 
-function IntroSequence({ onComplete }) {
+function IntroSequence({ photos, onComplete }) {
   const [progress, setProgress] = useState(0)
+
+  // Use photos for the background "wall". If empty, show nothing or placeholders.
+  // We duplicate photos to ensure the wall is full.
+  const wallPhotos = [...photos, ...photos, ...photos, ...photos].slice(0, 40)
 
   useEffect(() => {
     const timer = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(timer)
-          setTimeout(onComplete, 500)
+          setTimeout(onComplete, 800)
           return 100
         }
-        return prev + 2
+        return prev + 1.5
       })
     }, 40)
     return () => clearInterval(timer)
   }, [onComplete])
 
   return (
-    <div className="intro-container">
-      <motion.div 
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="intro-logo"
-      >
-        TWELVETWO
-      </motion.div>
-      <div className="progress-container">
-        <div className="progress-bar-fill" style={{ width: `${progress}%` }}></div>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="intro-container"
+    >
+      <div className="intro-photo-wall">
+        {wallPhotos.map((p, i) => (
+          <img key={i} src={p.url} className="intro-photo-item" alt="" />
+        ))}
       </div>
-      <p style={{marginTop: '1rem', fontSize: '0.8rem', letterSpacing: '0.2rem', color: 'var(--text-muted)'}}>
-        LOADING MEMORIES...
-      </p>
-    </div>
+
+      <motion.div 
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: 'spring', damping: 20 }}
+        className="intro-glass-card"
+      >
+        <div className="intro-logo">TWELVETWO</div>
+        <div className="progress-container">
+          <div className="progress-bar-fill" style={{ width: `${progress}%` }}></div>
+        </div>
+        <p style={{marginTop: '1.5rem', fontSize: '0.8rem', letterSpacing: '0.3rem', color: 'var(--text-muted)'}}>
+          PREPARING YOUR MEMORIES
+        </p>
+      </motion.div>
+    </motion.div>
   )
 }
 

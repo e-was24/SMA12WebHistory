@@ -422,9 +422,56 @@ nav {
     font-size: 1.8rem;
   }
 
-  .brand {
+.brand {
     font-size: 1.25rem;
   }
 }
+
+/* Premium Intro Styles */
+.intro-photo-wall {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  opacity: 0.3;
+  filter: blur(8px) grayscale(50%);
+  pointer-events: none;
+  z-index: -1;
+  animation: wallDrift 60s linear infinite;
+}
+
+@keyframes wallDrift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+.intro-photo-item {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.intro-glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4rem 6rem;
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+  .intro-glass-card {
+    padding: 2.5rem 2rem;
+    width: 85%;
+  }
+}
+
 
 
