@@ -373,17 +373,27 @@ function App() {
                       Selamat datang, {visitor.name}. Kenangan ini tersimpan di Cloud.
                     </motion.p>
                     
-                    <div className="filter-group">
-                      {['All', 'XI-F2', 'XII-F2'].map(f => (
-                        <button 
-                          key={f}
-                          onClick={() => setFilter(f)}
-                          className={`btn ${filter === f ? 'btn-primary' : 'btn-outline'}`}
-                        >
-                          {f}
-                        </button>
-                       ))}
+                    <div className="mode-selector-wrapper">
+                      <div className="mode-selector glass">
+                        {['All', 'XI-F2', 'XII-F2'].map(f => (
+                          <button 
+                            key={f}
+                            onClick={() => setFilter(f)}
+                            className={`mode-btn ${filter === f ? 'active' : ''}`}
+                          >
+                            {filter === f && (
+                              <motion.div 
+                                layoutId="mode-bg"
+                                className="mode-bg"
+                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                              />
+                            )}
+                            <span className="mode-text">{f}</span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
+
 
                     {fetchError && (
                       <div style={{
