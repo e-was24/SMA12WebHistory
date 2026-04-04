@@ -10,10 +10,45 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+const playShutterSound = () => {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+    const osc1 = audioCtx.createOscillator()
+    const gain1 = audioCtx.createGain()
+    osc1.type = 'triangle'
+    osc1.frequency.setValueAtTime(150, audioCtx.currentTime)
+    osc1.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1)
+    gain1.gain.setValueAtTime(0.3, audioCtx.currentTime)
+    gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1)
+    osc1.connect(gain1)
+    gain1.connect(audioCtx.destination)
+    
+    const noiseSize = audioCtx.sampleRate * 0.05
+    const noiseBuffer = audioCtx.createBuffer(1, noiseSize, audioCtx.sampleRate)
+    const output = noiseBuffer.getChannelData(0)
+    for (let i = 0; i < noiseSize; i++) {
+      output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (noiseSize / 2))
+    }
+    const noiseSource = audioCtx.createBufferSource()
+    noiseSource.buffer = noiseBuffer
+    const highPass = audioCtx.createBiquadFilter()
+    highPass.type = 'highpass'
+    highPass.frequency.value = 2000
+    noiseSource.connect(highPass)
+    highPass.connect(audioCtx.destination)
+    
+    osc1.start()
+    noiseSource.start()
+    osc1.stop(audioCtx.currentTime + 0.15)
+  } catch (e) { console.warn(e) }
+}
+
 function App() {
   const [view, setView] = useState('landing') // 'landing', 'intro', 'gallery', 'admin'
   const [showSplash, setShowSplash] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
 
   const [photos, setPhotos] = useState([])
   const [filter, setFilter] = useState('All')
@@ -252,33 +287,51 @@ function App() {
                 <div className="brand" onClick={() => setView('gallery')} style={{cursor: 'pointer'}}>
                   TWELVETWO
                 </div>
-                <div className="nav-links" style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
-                  <button className="btn btn-outline" onClick={() => setView('gallery')}>
-                    Gallery
-                  </button>
-                  {isAdmin ? (
-                    <div style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
-                      <button className="btn btn-primary" onClick={() => setView('admin')}>
-                        Admin Panel
-                      </button>
-                      <button className="btn btn-outline" onClick={() => setIsAdmin(false)}>
-                        <LogOut size={18} />
+                
+                <div className="nav-actions">
+                  <motion.button 
+                    whileTap={{ scale: 0.9 }}
+                    className="camera-menu-btn"
+                    onClick={() => {
+                      playShutterSound()
+                      setIsMenuOpen(!isMenuOpen)
+                    }}
+                  >
+                    <Camera size={24} />
+                    <span className="pdd-label">PDD</span>
+                  </motion.button>
+                </div>
+              </div>
+
+              {/* PDD Menu Overlay */}
+              <AnimatePresence>
+                {isMenuOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="pdd-menu-overlay glass"
+                  >
+                    <div className="menu-links">
+                      <button onClick={() => { setView('gallery'); setIsMenuOpen(false); }}>Gallery</button>
+                      
+                      {isAdmin ? (
+                        <button onClick={() => { setView('admin'); setIsMenuOpen(false); }}>Admin Panel</button>
+                      ) : (
+                        <button onClick={() => { setIsLoginModalOpen(true); setIsMenuOpen(false); }}>Admin Login</button>
+                      )}
+                      
+                      <button className="logout-btn" onClick={() => { handleLogout(); setIsMenuOpen(false); }}>Selesai</button>
+                      
+                      <button className="close-menu-btn" onClick={() => setIsMenuOpen(false)}>
+                        <X size={20} />
                       </button>
                     </div>
-                  ) : (
-                    <>
-                      <button className="btn btn-outline" onClick={() => setIsLoginModalOpen(true)}>
-                        <Shield size={18} /> Admin
-                      </button>
-                      <button className="btn btn-outline" style={{borderColor: '#ef4444', color: '#ef4444'}} onClick={handleLogout}>
-                        Selesai
-                      </button>
-                    </>
-                  )}
-                </div>
-
-              </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </nav>
+
 
             <main className="container">
               {view === 'gallery' ? (
@@ -685,43 +738,6 @@ function AdminPanel({ addPhoto, photos, deletePhoto, loading }) {
 }
 
 function InitialSplash({ onComplete }) {
-  const playShutterSound = () => {
-    try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-      
-      // Shutter Click 1 (Mechanical)
-      const osc1 = audioCtx.createOscillator()
-      const gain1 = audioCtx.createGain()
-      osc1.type = 'triangle'
-      osc1.frequency.setValueAtTime(150, audioCtx.currentTime)
-      osc1.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1)
-      gain1.gain.setValueAtTime(0.3, audioCtx.currentTime)
-      gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1)
-      osc1.connect(gain1)
-      gain1.connect(audioCtx.destination)
-      
-      // Shutter Click 2 (High frequency 'clack')
-      const noiseSize = audioCtx.sampleRate * 0.05
-      const noiseBuffer = audioCtx.createBuffer(1, noiseSize, audioCtx.sampleRate)
-      const output = noiseBuffer.getChannelData(0)
-      for (let i = 0; i < noiseSize; i++) {
-        output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (noiseSize / 2))
-      }
-      const noiseSource = audioCtx.createBufferSource()
-      noiseSource.buffer = noiseBuffer
-      const highPass = audioCtx.createBiquadFilter()
-      highPass.type = 'highpass'
-      highPass.frequency.value = 2000
-      noiseSource.connect(highPass)
-      highPass.connect(audioCtx.destination)
-      
-      osc1.start()
-      noiseSource.start()
-      osc1.stop(audioCtx.currentTime + 0.15)
-    } catch (e) { console.warn(e) }
-  }
-
-
   useEffect(() => {
     const timer = setTimeout(onComplete, 4000)
     const soundTimer = setTimeout(playShutterSound, 1800) // Trigger with flash
@@ -730,6 +746,7 @@ function InitialSplash({ onComplete }) {
       clearTimeout(soundTimer)
     }
   }, [onComplete])
+
 
 
   return (

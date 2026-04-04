@@ -74,40 +74,98 @@ body {
 }
 
 /* Button styles */
-.btn {
-  display: inline-flex;
+.nav-actions {
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  font-family: inherit;
+  gap: 1.5rem;
 }
 
-.btn-primary {
-  background-color: var(--primary);
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-hover);
-  transform: scale(1.02);
-}
-
-.btn-outline {
-  background: transparent;
+.camera-menu-btn {
+  background: var(--glass);
   border: 1px solid var(--glass-border);
   color: var(--text);
+  padding: 0.6rem 1.2rem;
+  border-radius: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
 }
 
-.btn-outline:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--text);
+.camera-menu-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
 }
+
+.pdd-label {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.1rem;
+}
+
+.pdd-menu-overlay {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 250px;
+  margin-top: 1rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  z-index: 1000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border: 1px solid var(--glass-border);
+}
+
+.menu-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.menu-links button {
+  background: none;
+  border: none;
+  color: var(--text);
+  text-align: left;
+  font-size: 1rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  font-family: 'Outfit', sans-serif;
+}
+
+.menu-links button:hover {
+  color: var(--accent);
+}
+
+.menu-links .logout-btn {
+  color: #ef4444;
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 1rem;
+}
+
+.close-menu-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .pdd-menu-overlay {
+    position: fixed;
+    top: 5rem;
+    left: 1rem;
+    right: 1rem;
+    width: auto;
+  }
+}
+
 
 /* Grid layout */
 .grid {
