@@ -685,10 +685,40 @@ function AdminPanel({ addPhoto, photos, deletePhoto, loading }) {
 }
 
 function InitialSplash({ onComplete }) {
+  const playShutterSound = () => {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+      const bufferSize = audioCtx.sampleRate * 0.1 // 100ms
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate)
+      const data = buffer.getChannelData(0)
+      
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize / 3)) 
+      }
+      
+      const source = audioCtx.createBufferSource()
+      source.buffer = buffer
+      const filter = audioCtx.createBiquadFilter()
+      filter.type = 'highpass'
+      filter.frequency.value = 1000
+      
+      source.connect(filter)
+      filter.connect(audioCtx.destination)
+      source.start()
+    } catch (e) {
+      console.warn('Audio failed:', e)
+    }
+  }
+
   useEffect(() => {
-    const timer = setTimeout(onComplete, 3500) // Show for 3.5 seconds
-    return () => clearTimeout(timer)
+    const timer = setTimeout(onComplete, 4000)
+    const soundTimer = setTimeout(playShutterSound, 1800) // Trigger with flash
+    return () => {
+      clearTimeout(timer)
+      clearTimeout(soundTimer)
+    }
   }, [onComplete])
+
 
   return (
     <motion.div 
