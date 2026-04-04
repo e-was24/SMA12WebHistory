@@ -415,10 +415,8 @@ function App() {
                       Selamat datang, {visitor.name}. Kenangan ini tersimpan di Cloud.
                     </motion.p>
                     
-  const [isFilterExpanded, setIsFilterExpanded] = useState(false)
-
-  // ... (inside return)
                     <div className="mode-selector-wrapper">
+
                       {/* Mobile Category Toggle (SVG Toggle) */}
                       <div className="mobile-filter-trigger">
                         <motion.button 
