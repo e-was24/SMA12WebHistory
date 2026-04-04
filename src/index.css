@@ -74,11 +74,56 @@ body {
 }
 
 /* Button styles */
-.mode-selector-wrapper {
+.nav-desktop {
   display: flex;
-  justify-content: center;
-  margin: 2rem 0;
+  gap: 2rem;
+  align-items: center;
 }
+
+.nav-mobile {
+  display: none;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.btn-link:hover {
+  color: var(--accent);
+}
+
+.btn-link.logout {
+  color: #ef4444;
+  opacity: 0.8;
+}
+
+.flash-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .nav-desktop {
+    display: none;
+  }
+  .nav-mobile {
+    display: flex;
+  }
+}
+
 
 .mode-selector {
   display: flex;

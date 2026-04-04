@@ -68,6 +68,8 @@ function App() {
   const [showSplash, setShowSplash] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isFlashing, setIsFlashing] = useState(false)
+
 
 
   const [photos, setPhotos] = useState([])
@@ -308,12 +310,25 @@ function App() {
                   TWELVETWO
                 </div>
                 
-                <div className="nav-actions">
+                {/* Desktop Navigation */}
+                <div className="nav-desktop">
+                  <button className="btn-link" onClick={() => setView('gallery')}>Gallery</button>
+                  {isAdmin ? (
+                    <button className="btn-link" onClick={() => setView('admin')}>Admin</button>
+                  ) : (
+                    <button className="btn-link" onClick={() => setIsLoginModalOpen(true)}>Admin</button>
+                  )}
+                  <button className="btn-link logout" onClick={handleLogout}>Selesai</button>
+                </div>
+
+                {/* Mobile Navigation (PDD Menu) */}
+                <div className="nav-mobile">
                   <motion.button 
                     whileTap={{ scale: 0.9 }}
                     className="camera-menu-btn"
                     onClick={() => {
-                      playShutterSound()
+                      setIsFlashing(true)
+                      setTimeout(() => setIsFlashing(false), 150)
                       setIsMenuOpen(!isMenuOpen)
                     }}
                   >
@@ -323,7 +338,7 @@ function App() {
                 </div>
               </div>
 
-              {/* PDD Menu Overlay */}
+              {/* PDD Menu Overlay (Mobile Only) */}
               <AnimatePresence>
                 {isMenuOpen && (
                   <motion.div 
@@ -351,6 +366,19 @@ function App() {
                 )}
               </AnimatePresence>
             </nav>
+
+            {/* Flash Effect Overlay */}
+            <AnimatePresence>
+              {isFlashing && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flash-overlay"
+                />
+              )}
+            </AnimatePresence>
+
 
 
             <main className="container">
