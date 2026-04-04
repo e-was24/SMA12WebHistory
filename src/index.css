@@ -19,6 +19,16 @@
   box-sizing: border-box;
 }
 
+/* Global Hidden Scrollbar */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE & Edge */
+}
+
+::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
 html {
   scrollbar-gutter: stable;
 }
@@ -27,8 +37,8 @@ body {
   font-family: var(--font);
   background-color: var(--bg);
   color: var(--text);
-  overflow-x: hidden;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
 #root {
