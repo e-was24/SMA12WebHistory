@@ -219,11 +219,12 @@ nav {
 
 /* Landing / Book styles */
 .landing-page {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  padding: 2rem 1rem;
+  overflow-y: auto;
   background: 
     linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
     url('https://www.transparenttextures.com/patterns/dark-wood.png'),
@@ -232,29 +233,45 @@ nav {
 }
 
 
+
 .book-container {
-  width: 90%;
-  max-width: 600px;
-  perspective: 1500px;
+  width: 100%;
+  max-width: 650px;
+  perspective: 2000px;
+  animation: bookAppear 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex;
+  justify-content: center;
 }
 
 .book-content {
+  width: 100%;
+  max-height: 85vh;
   background: #fcfaf2;
   background-image: 
     linear-gradient(to right, rgba(0,0,0,0.05) 0%, transparent 5%, transparent 95%, rgba(0,0,0,0.05) 100%),
     url('https://www.transparenttextures.com/patterns/paper-fibers.png');
   color: #3e2723;
-  padding: 4rem 5rem;
+  padding: 3rem 4rem;
   border-radius: 4px 12px 12px 4px;
   box-shadow: 
     -15px 0 30px rgba(0,0,0,0.6),
     40px 40px 100px rgba(0,0,0,0.5);
   position: relative;
   border-left: 20px solid #3e2723;
-  min-height: 550px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
+
+/* Custom Scrollbar for the Book */
+.book-content::-webkit-scrollbar {
+  width: 5px;
+}
+.book-content::-webkit-scrollbar-thumb {
+  background: rgba(62, 39, 35, 0.2);
+  border-radius: 10px;
+}
+
 
 .book-content::after {
   content: '';
