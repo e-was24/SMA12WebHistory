@@ -402,9 +402,41 @@ nav {
 }
 
 @media (max-width: 768px) {
+  .book-container {
+    width: 95%;
+    max-width: none;
+    margin-top: 1rem;
+  }
+
+  .book-content {
+    padding: 2.5rem 1.5rem 2.5rem 2.5rem; /* Reduced padding, keeping space for spine */
+    min-height: 450px;
+    border-left: 15px solid #3e2723;
+  }
+
+  .book-content::after {
+    left: 10px; /* Adjust line to match spine */
+  }
+
+  .book-title {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .attendance-input {
+    font-size: 1.3rem;
+  }
+
+  .checkmark-btn {
+    width: 65px;
+    height: 65px;
+    margin-top: 2rem;
+  }
+
   .gallery-header h1 {
     font-size: 2.2rem;
   }
+
 
   .intro-logo {
     font-size: 2.5rem;
