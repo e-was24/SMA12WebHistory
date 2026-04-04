@@ -338,7 +338,7 @@ function AdminPanel({ addPhoto, photos, deletePhoto }) {
 
   return (
     <div className="fade-in" style={{padding: '4rem 0'}}>
-      <div className="grid" style={{gridTemplateColumns: 'minmax(300px, 400px) 1fr'}}>
+      <div className="admin-grid">
         {/* Upload Form */}
         <div className="glass glass-card" style={{height: 'fit-content'}}>
           <h3 style={{marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
