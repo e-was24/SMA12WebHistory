@@ -387,14 +387,7 @@ function AdminPanel({ addPhoto, photos, deletePhoto }) {
             <div className="form-group">
               <label>Foto</label>
               <div 
-                style={{
-                  border: '2px dashed var(--glass-border)',
-                  borderRadius: '0.5rem',
-                  padding: '2rem',
-                  textAlign: 'center',
-                  background: dragging ? 'rgba(255,255,255,0.05)' : 'transparent',
-                  cursor: 'pointer'
-                }}
+                className={`admin-photo-upload ${dragging ? 'dragging' : ''}`}
                 onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
                 onDragLeave={() => setDragging(false)}
                 onDrop={(e) => {
@@ -409,6 +402,7 @@ function AdminPanel({ addPhoto, photos, deletePhoto }) {
                 }}
                 onClick={() => document.getElementById('fileInput').click()}
               >
+
                 {newPhoto.url ? (
                   <img src={newPhoto.url} style={{width: '100%', borderRadius: '0.5rem'}} />
                 ) : (
