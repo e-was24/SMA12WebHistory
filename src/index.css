@@ -471,11 +471,15 @@ nav {
 }
 
 .splash-brand {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
-  font-style: italic;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5rem;
   color: var(--accent);
+  margin-top: 0.5rem;
 }
+
 
 
 
