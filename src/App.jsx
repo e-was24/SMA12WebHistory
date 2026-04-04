@@ -38,10 +38,17 @@ function App() {
 
 
   useEffect(() => {
+    // Restore visitor session
+    const savedVisitor = localStorage.getItem('twelvetwo_visitor')
+    if (savedVisitor) {
+      setVisitor(JSON.parse(savedVisitor))
+      setView('gallery') // Auto-skip to gallery
+    }
+
     if (supabaseUrl && supabaseAnonKey) {
       fetchPhotos()
+      // ... (subscription logic)
 
-      // Real-time subscription
       const subscription = supabase
         .channel('public:photos')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'photos' }, () => {
@@ -69,8 +76,19 @@ function App() {
 
   const startIntro = () => {
     if (!visitor.name) return alert('Mohon isi nama Anda di buku reservasi!')
+    localStorage.setItem('twelvetwo_visitor', JSON.stringify(visitor))
     setView('intro')
   }
+
+  const handleLogout = () => {
+    if (confirm('Anda yakin ingin keluar dari galeri?')) {
+      localStorage.removeItem('twelvetwo_visitor')
+      setVisitor({ name: '', photo: null })
+      setView('landing')
+    }
+  }
+// ... (rest of the functions)
+
 
   // Optimized image compression
   const compressImage = (base64, maxWidth = 1200) => {
@@ -224,7 +242,7 @@ function App() {
                 <div className="brand" onClick={() => setView('gallery')} style={{cursor: 'pointer'}}>
                   TWELVETWO
                 </div>
-                <div className="nav-links" style={{display: 'flex', gap: '1rem'}}>
+                <div className="nav-links" style={{display: 'flex', gap: '1rem', alignItems: 'center'}}>
                   <button className="btn btn-outline" onClick={() => setView('gallery')}>
                     Gallery
                   </button>
@@ -238,11 +256,17 @@ function App() {
                       </button>
                     </div>
                   ) : (
-                    <button className="btn btn-outline" onClick={() => setIsLoginModalOpen(true)}>
-                      <Shield size={18} /> Admin
-                    </button>
+                    <>
+                      <button className="btn btn-outline" onClick={() => setIsLoginModalOpen(true)}>
+                        <Shield size={18} /> Admin
+                      </button>
+                      <button className="btn btn-outline" style={{borderColor: '#ef4444', color: '#ef4444'}} onClick={handleLogout}>
+                        Selesai
+                      </button>
+                    </>
                   )}
                 </div>
+
               </div>
             </nav>
 
