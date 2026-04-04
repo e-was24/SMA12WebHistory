@@ -361,9 +361,20 @@ function App() {
                 <AdminPanel addPhoto={addPhoto} photos={photos} deletePhoto={deletePhoto} loading={loading} />
               )}
             </main>
+            <footer style={{
+              textAlign: 'center', 
+              padding: '2rem', 
+              opacity: 0.4, 
+              fontSize: '0.7rem', 
+              letterSpacing: '0.1rem',
+              textTransform: 'uppercase'
+            }}>
+              created by elan
+            </footer>
           </motion.div>
         )}
       </AnimatePresence>
+
 
       {/* Login Modal */}
       <AnimatePresence>
@@ -480,9 +491,16 @@ function LandingPage({ visitor, setVisitor, onConfirm, setIsLoginModalOpen }) {
           >
             <Shield size={16} />
           </button>
+          <div style={{
+            position: 'absolute', bottom: '1.5rem', left: '0', right: '0', 
+            textAlign: 'center', opacity: 0.2, fontSize: '0.6rem', letterSpacing: '0.1rem'
+          }}>
+            created by elan
+          </div>
         </div>
       </div>
     </motion.div>
+
   )
 }
 
