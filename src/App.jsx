@@ -17,19 +17,25 @@ function App() {
   const [password, setPassword] = useState('')
   const [visitor, setVisitor] = useState({ name: '', photo: null })
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(null)
 
   // Fetch photos from Supabase
   const fetchPhotos = async () => {
     setLoading(true)
+    setFetchError(null)
     const { data, error } = await supabase
       .from('photos')
       .select('*')
       .order('created_at', { ascending: false })
     
     if (data) setPhotos(data)
-    if (error) console.error('Error fetching photos:', error)
+    if (error) {
+      console.error('Error fetching photos:', error)
+      setFetchError(error.message)
+    }
     setLoading(false)
   }
+
 
   useEffect(() => {
     if (supabaseUrl && supabaseAnonKey) {
@@ -269,9 +275,25 @@ function App() {
                         >
                           {f}
                         </button>
-                      ))}
+                       ))}
                     </div>
+
+                    {fetchError && (
+                      <div style={{
+                        background: 'rgba(239, 68, 68, 0.1)', 
+                        border: '1px solid #ef4444', 
+                        padding: '1rem', 
+                        borderRadius: '0.5rem', 
+                        marginBottom: '2rem',
+                        color: '#ef4444',
+                        textAlign: 'center'
+                      }}>
+                        <p><strong>Error Terdeteksi:</strong> {fetchError}</p>
+                        <p style={{fontSize: '0.8rem', marginTop: '0.5rem'}}>Coba cek SQL Policies atau Redploy di Vercel.</p>
+                      </div>
+                    )}
                   </header>
+
 
                   <div className="grid">
                     <AnimatePresence>
