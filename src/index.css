@@ -441,36 +441,58 @@ nav {
 }
 
 @media (max-width: 768px) {
+  .landing-page {
+    height: auto;
+    min-height: 100vh;
+    padding: 1rem;
+    overflow-y: visible;
+  }
+
   .book-container {
-    width: 95%;
+    width: 100%;
     max-width: none;
-    margin-top: 1rem;
+    height: auto;
+    margin: 1rem 0;
+    perspective: none;
   }
 
   .book-content {
-    padding: 2.5rem 1.5rem 2.5rem 2.5rem; /* Reduced padding, keeping space for spine */
-    min-height: 450px;
-    border-left: 15px solid #3e2723;
+    max-height: none;
+    padding: 2.5rem 1.5rem;
+    min-height: auto;
+    border-left: 10px solid #3e2723;
+  }
+
+  .book-spread {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .book-content::after {
-    left: 10px; /* Adjust line to match spine */
+    display: none;
   }
 
   .book-title {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     margin-bottom: 2rem;
   }
 
   .attendance-input {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
+  }
+
+  .attendance-photo-upload {
+    width: 100%;
+    max-width: 250px;
+    height: 250px;
   }
 
   .checkmark-btn {
-    width: 65px;
-    height: 65px;
-    margin-top: 2rem;
+    width: 60px;
+    height: 60px;
+    margin-top: 1.5rem;
   }
+
 
   .book-spread {
     grid-template-columns: 1fr;
