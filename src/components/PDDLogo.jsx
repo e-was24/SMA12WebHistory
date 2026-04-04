@@ -49,15 +49,16 @@ export function PDDLogo() {
           />
         ))}
 
-        {/* Sparkle/Flash */}
+        {/* Sparkle/Flash (Fixed: Single pulse, no flicker) */}
         <motion.path 
           d="M75 30 L80 35 M75 35 L80 30" 
           stroke="var(--accent)" 
           strokeWidth="2"
           initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: [0, 1, 0], scale: [0, 1.2, 0] }}
-          transition={{ delay: 2, duration: 1, repeat: Infinity, repeatDelay: 2 }}
+          animate={{ opacity: [0, 1, 0], scale: [0, 1.5, 0] }}
+          transition={{ delay: 1.8, duration: 0.4 }} 
         />
+
       </svg>
       
       {/* PDD Text in SVG container center-bottom */}

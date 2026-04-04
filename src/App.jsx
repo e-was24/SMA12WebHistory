@@ -688,27 +688,39 @@ function InitialSplash({ onComplete }) {
   const playShutterSound = () => {
     try {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-      const bufferSize = audioCtx.sampleRate * 0.1 // 100ms
-      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate)
-      const data = buffer.getChannelData(0)
       
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize / 3)) 
+      // Shutter Click 1 (Mechanical)
+      const osc1 = audioCtx.createOscillator()
+      const gain1 = audioCtx.createGain()
+      osc1.type = 'triangle'
+      osc1.frequency.setValueAtTime(150, audioCtx.currentTime)
+      osc1.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1)
+      gain1.gain.setValueAtTime(0.3, audioCtx.currentTime)
+      gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1)
+      osc1.connect(gain1)
+      gain1.connect(audioCtx.destination)
+      
+      // Shutter Click 2 (High frequency 'clack')
+      const noiseSize = audioCtx.sampleRate * 0.05
+      const noiseBuffer = audioCtx.createBuffer(1, noiseSize, audioCtx.sampleRate)
+      const output = noiseBuffer.getChannelData(0)
+      for (let i = 0; i < noiseSize; i++) {
+        output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (noiseSize / 2))
       }
+      const noiseSource = audioCtx.createBufferSource()
+      noiseSource.buffer = noiseBuffer
+      const highPass = audioCtx.createBiquadFilter()
+      highPass.type = 'highpass'
+      highPass.frequency.value = 2000
+      noiseSource.connect(highPass)
+      highPass.connect(audioCtx.destination)
       
-      const source = audioCtx.createBufferSource()
-      source.buffer = buffer
-      const filter = audioCtx.createBiquadFilter()
-      filter.type = 'highpass'
-      filter.frequency.value = 1000
-      
-      source.connect(filter)
-      filter.connect(audioCtx.destination)
-      source.start()
-    } catch (e) {
-      console.warn('Audio failed:', e)
-    }
+      osc1.start()
+      noiseSource.start()
+      osc1.stop(audioCtx.currentTime + 0.15)
+    } catch (e) { console.warn(e) }
   }
+
 
   useEffect(() => {
     const timer = setTimeout(onComplete, 4000)
