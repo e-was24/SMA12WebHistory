@@ -850,6 +850,26 @@ nav {
   margin-top: 0.3rem;
 }
 
+.edit-details-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.mini-input {
+  padding: 0.4rem 0.8rem !important;
+  font-size: 0.85rem !important;
+  height: auto !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.edit-category-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .edit-mini-btn {
   background: transparent;
   border: none;

@@ -161,6 +161,7 @@ function App() {
   const [filter, setFilter] = useState("All");
   const [editingId, setEditingId] = useState(null);
   const [editCategory, setEditCategory] = useState("");
+  const [editCaption, setEditCaption] = useState("");
 
   // Scroll Locking
   useEffect(() => {
@@ -264,11 +265,11 @@ function App() {
     }
   };
 
-  const updatePhotoCategory = async (id, newClass) => {
+  const updatePhotoDetails = async (id, newClass, newCaption) => {
     setLoading(true);
     const { error } = await supabase
       .from("photos")
-      .update({ class: newClass })
+      .update({ class: newClass, caption: newCaption })
       .eq("id", id);
     if (error) alert(error.message);
     else {
@@ -738,52 +739,70 @@ function App() {
                           <div key={p.id} className="admin-item glass">
                             <img src={p.url} alt="" />
                             <div className="item-info">
-                              <p>{p.caption}</p>
                               {editingId === p.id ? (
-                                <div className="edit-category-wrap">
-                                  <select
-                                    className="form-input mini-select"
-                                    value={editCategory}
+                                <div className="edit-details-wrap">
+                                  <input
+                                    type="text"
+                                    className="form-input mini-input"
+                                    value={editCaption}
                                     onChange={(e) =>
-                                      setEditCategory(e.target.value)
+                                      setEditCaption(e.target.value)
                                     }
-                                  >
-                                    <option value="XI-F2">XI-F2</option>
-                                    <option value="XII-F2">XII-F2</option>
-                                    <option value="Aib">Aib</option>
-                                    <option value="Penghargaan">
-                                      Penghargaan
-                                    </option>
-                                    <option value="Video">Video</option>
-                                  </select>
-                                  <button
-                                    className="save-btn"
-                                    onClick={() =>
-                                      updatePhotoCategory(p.id, editCategory)
-                                    }
-                                  >
-                                    <ChevronRight size={16} />
-                                  </button>
-                                  <button
-                                    className="cancel-btn"
-                                    onClick={() => setEditingId(null)}
-                                  >
-                                    <X size={16} />
-                                  </button>
+                                    placeholder="Edit Caption..."
+                                  />
+                                  <div className="edit-category-wrap">
+                                    <select
+                                      className="form-input mini-select"
+                                      value={editCategory}
+                                      onChange={(e) =>
+                                        setEditCategory(e.target.value)
+                                      }
+                                    >
+                                      <option value="XI-F2">XI-F2</option>
+                                      <option value="XII-F2">XII-F2</option>
+                                      <option value="Aib">Aib</option>
+                                      <option value="Penghargaan">
+                                        Penghargaan
+                                      </option>
+                                      <option value="Video">Video</option>
+                                    </select>
+                                    <button
+                                      className="save-btn"
+                                      onClick={() =>
+                                        updatePhotoDetails(
+                                          p.id,
+                                          editCategory,
+                                          editCaption,
+                                        )
+                                      }
+                                    >
+                                      <ChevronRight size={16} />
+                                    </button>
+                                    <button
+                                      className="cancel-btn"
+                                      onClick={() => setEditingId(null)}
+                                    >
+                                      <X size={16} />
+                                    </button>
+                                  </div>
                                 </div>
                               ) : (
-                                <div className="category-row">
-                                  <small>{p.class}</small>
-                                  <button
-                                    className="edit-mini-btn"
-                                    onClick={() => {
-                                      setEditingId(p.id);
-                                      setEditCategory(p.class);
-                                    }}
-                                  >
-                                    <Sliders size={12} />
-                                  </button>
-                                </div>
+                                <>
+                                  <p>{p.caption}</p>
+                                  <div className="category-row">
+                                    <small>{p.class}</small>
+                                    <button
+                                      className="edit-mini-btn"
+                                      onClick={() => {
+                                        setEditingId(p.id);
+                                        setEditCategory(p.class);
+                                        setEditCaption(p.caption);
+                                      }}
+                                    >
+                                      <Sliders size={12} />
+                                    </button>
+                                  </div>
+                                </>
                               )}
                             </div>
                             <button
