@@ -99,7 +99,7 @@ const PhotoCollage = ({ photos }) => {
             key={`${p.id}-${i}`}
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{
-              opacity: 0.1,
+              opacity: 0.5,
               scale,
               rotate,
               top: `${top}%`,

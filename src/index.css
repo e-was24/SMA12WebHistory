@@ -1119,7 +1119,7 @@ nav {
   inset: 0;
   background: radial-gradient(
     circle at center,
-    rgba(8, 10, 15, 0.4),
+    rgba(8, 10, 15, 0.2),
     var(--primary)
   );
   z-index: 1;
@@ -1128,7 +1128,7 @@ nav {
 .collage-item-abstract {
   position: absolute;
   pointer-events: none;
-  filter: blur(2px) saturate(80%);
+  filter: blur(2px) brightness(50%);
   transition: all 1s ease;
 }
 
