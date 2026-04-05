@@ -445,7 +445,11 @@ function App() {
             <input type="password" placeholder="Passcode" className="form-input" value={password} onChange={e => setPassword(e.target.value)} />
             <div className="modal-btns">
               <button onClick={() => setIsLoginModalOpen(false)}>Cancel</button>
-              <button className="btn-primary" onClick={() => { if(password === import.meta.env.VITE_ADMIN_PASSWORD) { setIsAdmin(true); setIsLoginModalOpen(false); setView('admin'); } else alert('Wrong code!'); }}>Enter</button>
+              <button className="btn-primary" onClick={() => { 
+                console.log('Login attempt passcode:', password);
+                console.log('Expected passcode:', import.meta.env.VITE_ADMIN_PASSWORD);
+                if(password === import.meta.env.VITE_ADMIN_PASSWORD) { setIsAdmin(true); setIsLoginModalOpen(false); setView('admin'); } else alert('Wrong code!'); 
+              }}>Enter</button>
             </div>
           </motion.div>
         </div>
