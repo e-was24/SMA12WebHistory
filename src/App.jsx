@@ -63,18 +63,16 @@ const playCrispShutter = () => {
 }
 
 const PDDLogo = () => (
-  <motion.div className="pdd-logo-svg">
-    <svg viewBox="0 0 100 100" width="80" height="80">
-      <defs>
-        <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#ffd700" />
-          <stop offset="100%" stopColor="#ffa500" />
-        </linearGradient>
-      </defs>
-      <path d="M50 5 L10 25 L10 50 C10 70 50 95 50 95 C50 95 90 70 90 50 L90 25 L50 5 Z" fill="url(#shieldGrad)" stroke="#fff" strokeWidth="2" />
-      <text x="50" y="55" fontSize="20" fontWeight="bold" fill="#000" textAnchor="middle" fontFamily="Cinzel">12</text>
-      <text x="50" y="75" fontSize="12" fontWeight="bold" fill="#000" textAnchor="middle" fontFamily="Outfit">TWO</text>
-    </svg>
+  <motion.div 
+    initial={{ scale: 0.8, opacity: 0 }}
+    animate={{ scale: 1, opacity: 1 }}
+    className="pdd-logo-container"
+  >
+    <img 
+      src="/people_chatting.png" 
+      alt="TwelveTwo Logo" 
+      className="brand-illustration"
+    />
   </motion.div>
 )
 
@@ -98,7 +96,17 @@ function App() {
   const [students, setStudents] = useState([])
   const [filter, setFilter] = useState('All')
   
-  // Admin Form States
+  // Scroll Locking
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => { document.body.style.overflow = 'unset' }
+  }, [isMenuOpen])
+
+  // Data Actions
   const [newPhoto, setNewPhoto] = useState({ class: 'XI-F2', caption: '', url: '' })
   const [newStudent, setNewStudent] = useState({ name: '', attendance_no: '', gender: 'cowok', photo_url: '', is_teacher: false })
 
@@ -215,14 +223,34 @@ function App() {
         </div>
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="pdd-menu-overlay glass">
-              <div className="menu-links">
-                <button onClick={() => { setView('gallery'); setIsMenuOpen(false); }}>Gallery</button>
-                <button onClick={() => { isAdmin ? setView('admin') : setIsLoginModalOpen(true); setIsMenuOpen(false); }}>Admin Panel</button>
-                <button className="logout-btn" onClick={() => { handleLogout(); setIsMenuOpen(false); }}>Selesai</button>
-                <button className="close-menu-btn" onClick={() => setIsMenuOpen(false)}><X size={20} /></button>
-              </div>
-            </motion.div>
+            <>
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }} 
+                onClick={() => setIsMenuOpen(false)}
+                className="menu-backdrop" 
+              />
+              <motion.div 
+                initial={{ x: '100%' }} 
+                animate={{ x: 0 }} 
+                exit={{ x: '100%' }} 
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="pdd-sidebar glass"
+              >
+                <div className="sidebar-header">
+                  <PDDLogo />
+                  <button className="close-sidebar" onClick={() => setIsMenuOpen(false)}><X size={24} /></button>
+                </div>
+                <div className="sidebar-links">
+                  <button onClick={() => { setView('gallery'); setIsMenuOpen(false); }}>Gallery</button>
+                  <button onClick={() => { isAdmin ? setView('admin') : setIsLoginModalOpen(true); setIsMenuOpen(false); }}>Admin Panel</button>
+                  <div className="sidebar-footer">
+                    <button className="logout-btn-sidebar" onClick={() => { handleLogout(); setIsMenuOpen(false); }}>Selesai</button>
+                  </div>
+                </div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
       </nav>
@@ -461,9 +489,16 @@ function InitialSplash({ onComplete }) {
   }, [onComplete])
   return (
     <motion.div exit={{ opacity: 0 }} className="splash">
-      <PDDLogo />
-      <div className="loader"><div className="loader-fill" style={{width: `${prog}%`}} /></div>
-      <p className="splash-sub">DEEP MEMORIES . PREMIUM ARCHIVE</p>
+      <motion.div 
+        animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <PDDLogo />
+      </motion.div>
+      <div className="loader-container-refined">
+        <div className="loader-fill-refined" style={{width: `${prog}%`}} />
+      </div>
+      <p className="splash-sub-refined">CRAFTING YOUR LEGACY</p>
     </motion.div>
   )
 }

@@ -59,11 +59,118 @@ nav {
 
 .brand {
   font-family: 'Cinzel', serif;
-  font-size: 1.5rem;
-  letter-spacing: 0.3rem;
+  font-size: 1.2rem;
+  letter-spacing: 0.2rem;
   font-weight: 700;
   cursor: pointer;
   color: var(--accent);
+}
+
+/* Sidebar & Backdrop */
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 1100;
+}
+
+.pdd-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 320px;
+  max-width: 85vw;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  z-index: 1200;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4rem;
+}
+
+.close-sidebar {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.sidebar-links button {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 1.5rem;
+  font-family: 'Cinzel', serif;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.sidebar-links button:hover {
+  color: var(--accent);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+}
+
+.logout-btn-sidebar {
+  color: #ef4444 !important;
+  font-size: 1rem !important;
+  font-family: 'Outfit', sans-serif !important;
+}
+
+/* Brand Illustration */
+.pdd-logo-container {
+  display: flex;
+  justify-content: center;
+}
+
+.brand-illustration {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px var(--accent-glow));
+}
+
+/* Refined Loading */
+.loader-container-refined {
+  width: 151px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  margin: 2.5rem 0;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.loader-fill-refined {
+  height: 100%;
+  background: var(--accent);
+  box-shadow: 0 0 15px var(--accent);
+  transition: width 0.1s linear;
+}
+
+.splash-sub-refined {
+  font-size: 0.6rem;
+  letter-spacing: 0.5rem;
+  color: var(--text-muted);
+  font-weight: 300;
 }
 
 .nav-desktop {
@@ -110,18 +217,6 @@ nav {
   justify-content: center;
 }
 
-.loader {
-  width: 200px;
-  height: 4px;
-  background: rgba(255,255,255,0.1);
-  margin: 2rem 0;
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.loader-fill { height: 100%; background: var(--accent); box-shadow: 0 0 10px var(--accent); transition: width 0.1s linear; }
-.splash-sub { font-size: 0.7rem; letter-spacing: 0.4rem; color: var(--text-muted); }
-
 .landing-card {
   padding: 3rem;
   width: 100%;
@@ -129,7 +224,7 @@ nav {
   text-align: center;
 }
 
-.landing-card h1 { font-family: 'Cinzel', serif; margin: 1.5rem 0 1rem; }
+.landing-card h1 { font-family: 'Cinzel', serif; margin: 1.5rem 0 1rem; font-size: 1.8rem; }
 .landing-card p { color: var(--text-muted); margin-bottom: 2rem; }
 
 /* App UI */
@@ -141,8 +236,8 @@ nav {
   text-align: center;
 }
 
-.gallery-header h1 { font-family: 'Cinzel', serif; font-size: 2.5rem; margin-bottom: 1rem; }
-.text-muted { color: var(--text-muted); }
+.gallery-header h1 { font-family: 'Cinzel', serif; font-size: 2rem; margin-bottom: 0.8rem; letter-spacing: 2px; }
+.text-muted { font-size: 0.9rem; color: var(--text-muted); }
 
 /* Filters */
 .filter-system { margin-top: 2rem; display: flex; justify-content: center; }
@@ -157,7 +252,7 @@ nav {
 
 /* Student Cards */
 .presensi-section { padding: 2rem 0; }
-.section-title { font-family: 'Cinzel', serif; text-align: center; margin-bottom: 3rem; color: var(--accent); letter-spacing: 3px; }
+.section-title { font-family: 'Cinzel', serif; text-align: center; margin-bottom: 2.5rem; color: var(--accent); letter-spacing: 2px; font-size: 1.5rem; }
 .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1.5rem; }
 
 .student-card {
@@ -176,8 +271,8 @@ nav {
 
 .s-details { display: flex; flex-direction: column; gap: 4px; }
 .s-no { font-size: 0.7rem; font-weight: 800; opacity: 0.5; }
-.s-name-text { font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.s-type { font-size: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 4px; }
+.s-name-text { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.s-type { font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 4px; }
 
 .card-cute { border-color: rgba(244, 114, 182, 0.4); box-shadow: 0 0 15px rgba(244, 114, 182, 0.1); }
 .card-cute .s-type { color: var(--pink); }
@@ -221,16 +316,18 @@ nav {
   .nav-desktop { display: none; }
   .admin-grid { grid-template-columns: 1fr; }
   .gallery-header { padding: 6rem 0 2rem; }
-  .gallery-header h1 { font-size: 1.8rem; }
+  .gallery-header h1 { font-size: 1.6rem; }
   .filter-bar { width: 100%; background: var(--primary); padding: 1rem; }
-  .pdd-menu-overlay { 
-    position: fixed; inset: 0; z-index: 1100; padding: 2rem; 
-    display: flex; flex-direction: column; align-items: center; justify-content: center; 
-  }
-  .menu-links { display: flex; flex-direction: column; gap: 2rem; text-align: center; }
-  .menu-links button { background: none; border: none; color: #fff; font-size: 1.8rem; font-family: 'Cinzel', serif; }
-  .close-menu-btn { position: absolute; top: 2rem; right: 2rem; }
 }
+
+/* Modals */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: flex; align-items: center; justify-content: center; }
+.modal { padding: 2rem; max-width: 400px; width: 90%; text-align: center; }
+.modal h3 { margin-bottom: 1.5rem; font-family: 'Cinzel', serif; }
+.modal-btns { display: flex; gap: 1rem; margin-top: 1.5rem; }
+.modal-btns button { flex: 1; padding: 0.8rem; border-radius: 0.5rem; border: none; font-weight: 700; cursor: pointer; }
+
+.flash-overlay { position: fixed; inset: 0; background: #fff; z-index: 10000; pointer-events: none; }
 
 /* Modals */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: flex; align-items: center; justify-content: center; }
