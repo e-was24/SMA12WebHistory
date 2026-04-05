@@ -915,11 +915,14 @@ function App() {
                   icon={UserX}
                 />
               )
-            ) : photos.filter((p) => filter === "All" || p.class === filter)
-                .length > 0 ? (
+            ) : photos.filter((p) =>
+                filter === "All" ? p.class !== "Aib" : p.class === filter
+              ).length > 0 ? (
               <div className="gallery-grid">
                 {photos
-                  .filter((p) => filter === "All" || p.class === filter)
+                  .filter((p) =>
+                    filter === "All" ? p.class !== "Aib" : p.class === filter
+                  )
                   .map((photo) => (
                     <PhotoCard key={photo.id} photo={photo} />
                   ))}
