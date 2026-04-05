@@ -10,6 +10,8 @@ import {
   GraduationCap,
   Heart,
   Zap,
+  ImageOff,
+  UserX,
 } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 
@@ -124,6 +126,17 @@ const PDDLogo = () => (
     className="pdd-logo-container"
   >
     <ChattingSVG />
+  </motion.div>
+);
+
+const EmptyState = ({ message, icon: Icon }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="empty-state glass"
+  >
+    {Icon && <Icon size={48} className="empty-icon" />}
+    <p>{message || "No data found."}</p>
   </motion.div>
 );
 
@@ -717,8 +730,9 @@ function App() {
                   {adminTab === "photos" ? "Daftar Foto" : "Daftar Presensi"}
                 </h3>
                 <div className="admin-list">
-                  {adminTab === "photos"
-                    ? photos.map((p) => (
+                  {adminTab === "photos" ? (
+                    photos.length > 0 ? (
+                      photos.map((p) => (
                         <div key={p.id} className="admin-item glass">
                           <img src={p.url} alt="" />
                           <div className="item-info">
@@ -777,35 +791,42 @@ function App() {
                           </button>
                         </div>
                       ))
-                    : students.map((s) => (
-                        <div key={s.id} className="admin-item glass">
-                          <div className="student-avatar-mini">
-                            {s.photo_url ? (
-                              <img src={s.photo_url} alt="" />
-                            ) : s.is_teacher ? (
-                              "🎓"
-                            ) : (
-                              s.attendance_no
-                            )}
-                          </div>
-                          <div className="item-info">
-                            <p>{s.name}</p>
-                            <small
-                              className={
-                                s.gender === "cewek" ? "text-pink" : "text-blue"
-                              }
-                            >
-                              {s.gender}
-                            </small>
-                          </div>
-                          <button
-                            onClick={() => deleteStudent(s.id, s.photo_url)}
-                            className="delete-btn"
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                    ) : (
+                      <EmptyState message="Belum ada foto gallery." icon={ImageOff} />
+                    )
+                  ) : students.length > 0 ? (
+                    students.map((s) => (
+                      <div key={s.id} className="admin-item glass">
+                        <div className="student-avatar-mini">
+                          {s.photo_url ? (
+                            <img src={s.photo_url} alt="" />
+                          ) : s.is_teacher ? (
+                            "🎓"
+                          ) : (
+                            s.attendance_no
+                          )}
                         </div>
-                      ))}
+                        <div className="item-info">
+                          <p>{s.name}</p>
+                          <small
+                            className={
+                              s.gender === "cewek" ? "text-pink" : "text-blue"
+                            }
+                          >
+                            {s.gender}
+                          </small>
+                        </div>
+                        <button
+                          onClick={() => deleteStudent(s.id, s.photo_url)}
+                          className="delete-btn"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <EmptyState message="Belum ada data presensi." icon={UserX} />
+                  )}
                 </div>
               </div>
             </div>
@@ -873,14 +894,20 @@ function App() {
             {loading ? (
               <div className="loading-state">Syncing Cloud...</div>
             ) : filter === "Presensi" ? (
-              <PresensiSection students={students} />
+              students.length > 0 ? (
+                <PresensiSection students={students} />
+              ) : (
+                <EmptyState message="Belum ada data presensi yang terdaftar." icon={UserX} />
+              )
             ) : (
               <div className="gallery-grid">
-                {photos
-                  .filter((p) => filter === "All" || p.class === filter)
-                  .map((photo) => (
-                    <PhotoCard key={photo.id} photo={photo} />
-                  ))}
+                {photos.filter((p) => filter === "All" || p.class === filter).length > 0 ? (
+                  photos
+                    .filter((p) => filter === "All" || p.class === filter)
+                    .map((photo) => <PhotoCard key={photo.id} photo={photo} />)
+                ) : (
+                  <EmptyState message="Belum ada memori di kategori ini." icon={ImageOff} />
+                )}
               </div>
             )}
           </div>

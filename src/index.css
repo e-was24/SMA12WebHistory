@@ -1165,3 +1165,28 @@ nav {
   background: rgba(255, 0, 0, 0.8);
   transform: scale(1.1);
 }
+
+/* Empty States */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  gap: 1.5rem;
+  border-radius: 2rem;
+  margin: 2rem 0;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--glass-border);
+  width: 100%;
+}
+
+.empty-icon {
+  opacity: 0.3;
+  color: var(--accent-primary);
+  filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.3));
+}
