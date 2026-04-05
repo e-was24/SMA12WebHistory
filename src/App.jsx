@@ -938,7 +938,12 @@ function App() {
             </header>
 
             {loading ? (
-              <div className="loading-state">Syncing Cloud...</div>
+              <div className="loading-state">
+                <PhotoCollage photos={photos} />
+                <div style={{ position: "relative", zIndex: 1 }}>
+                  Syncing Cloud...
+                </div>
+              </div>
             ) : filter === "Presensi" ? (
               students.length > 0 ? (
                 <PresensiSection students={students} />
