@@ -598,7 +598,8 @@ nav {
 /* Gallery Masonry Refined */
 .gallery-grid {
   display: block;
-  columns: 3 320px;
+  column-width: 280px;
+  column-count: 4;
   column-gap: 1.2rem;
   padding: 1rem 0;
 }
@@ -920,6 +921,10 @@ nav {
 
 /* Mobile & Tablet Adaptations */
 @media (max-width: 1024px) {
+  .gallery-grid {
+    column-count: 3;
+    column-width: auto;
+  }
   .nav-desktop {
     display: none;
   }
@@ -944,6 +949,18 @@ nav {
     width: 100%;
     background: var(--primary);
     padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-grid {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-grid {
+    column-count: 1;
   }
 }
 
