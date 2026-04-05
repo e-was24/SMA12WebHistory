@@ -62,17 +62,45 @@ const playCrispShutter = () => {
   noise.start();
 }
 
+const ChattingSVG = () => (
+  <svg viewBox="0 0 120 80" width="120" height="80" className="chatting-svg">
+    <defs>
+      <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="var(--accent-primary)" />
+        <stop offset="100%" stopColor="var(--accent-secondary)" />
+      </linearGradient>
+    </defs>
+    {/* Left Figure */}
+    <motion.g animate={{ y: [0, -4, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
+      <rect x="25" y="35" width="24" height="24" rx="12" fill="url(#logoGrad)" opacity="0.6" />
+      <circle cx="37" cy="22" r="9" fill="url(#logoGrad)" />
+    </motion.g>
+    {/* Right Figure */}
+    <motion.g animate={{ y: [0, -6, 0] }} transition={{ duration: 3.5, repeat: Infinity, delay: 0.5, ease: "easeInOut" }}>
+      <rect x="75" y="35" width="24" height="24" rx="12" fill="url(#logoGrad)" opacity="0.4" />
+      <circle cx="87" cy="22" r="9" fill="url(#logoGrad)" opacity="0.8" />
+    </motion.g>
+    {/* Minimal Chat Line */}
+    <motion.path 
+      d="M50 25 Q60 15 70 25" 
+      stroke="var(--accent-primary)" 
+      strokeWidth="2" 
+      fill="none" 
+      initial={{ pathLength: 0, opacity: 0 }}
+      animate={{ pathLength: 1, opacity: [0, 1, 0] }}
+      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+    />
+  </svg>
+)
+
 const PDDLogo = () => (
   <motion.div 
-    initial={{ scale: 0.8, opacity: 0 }}
+    initial={{ scale: 0.9, opacity: 0 }}
     animate={{ scale: 1, opacity: 1 }}
+    transition={{ duration: 0.8, ease: "easeOut" }}
     className="pdd-logo-container"
   >
-    <img 
-      src="/people_chatting.png" 
-      alt="TwelveTwo Logo" 
-      className="brand-illustration"
-    />
+    <ChattingSVG />
   </motion.div>
 )
 
@@ -232,10 +260,9 @@ function App() {
                 className="menu-backdrop" 
               />
               <motion.div 
-                initial={{ x: '100%' }} 
-                animate={{ x: 0 }} 
-                exit={{ x: '100%' }} 
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                initial={{ scale: 0, opacity: 0, x: '50%', y: '-50%' }} 
+                animate={{ scale: 1, opacity: 1, x: 0, y: 0 }} 
+                exit={{ scale: 0, opacity: 0, transition: { duration: 0.4, ease: "backIn" } }} 
                 className="pdd-sidebar glass"
               >
                 <div className="sidebar-header">
@@ -373,14 +400,19 @@ function App() {
                 </motion.p>
                 
                 <div className="filter-system">
-                  <div className="mobile-only">
+                  <div className="filter-header">
                     <button className={`hud-toggle glass ${isFilterExpanded ? 'active' : ''}`} onClick={() => setIsFilterExpanded(!isFilterExpanded)}>
                        <Sliders size={18} /> <span>HUD FILTER</span>
                     </button>
                   </div>
                   <AnimatePresence>
-                    {(window.innerWidth > 768 || isFilterExpanded) && (
-                      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="filter-bar glass">
+                    {isFilterExpanded && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0, scale: 0.95 }} 
+                        animate={{ opacity: 1, height: 'auto', scale: 1 }} 
+                        exit={{ opacity: 0, height: 0, scale: 0.95 }} 
+                        className="filter-bar glass"
+                      >
                         {['All', 'XI-F2', 'XII-F2', 'Presensi', 'Penghargaan', 'Video'].map(f => (
                           <button key={f} className={`filter-btn ${filter === f ? 'active' : ''}`} onClick={() => {setFilter(f); setIsFilterExpanded(false);}}>
                             {f}
@@ -412,7 +444,7 @@ function App() {
             <input type="password" placeholder="Passcode" className="form-input" value={password} onChange={e => setPassword(e.target.value)} />
             <div className="modal-btns">
               <button onClick={() => setIsLoginModalOpen(false)}>Cancel</button>
-              <button className="btn-primary" onClick={() => { if(password === '122') { setIsAdmin(true); setIsLoginModalOpen(false); setView('admin'); } else alert('Wrong code!'); }}>Enter</button>
+              <button className="btn-primary" onClick={() => { if(password === import.meta.env.VITE_ADMIN_PASSWORD) { setIsAdmin(true); setIsLoginModalOpen(false); setView('admin'); } else alert('Wrong code!'); }}>Enter</button>
             </div>
           </motion.div>
         </div>
@@ -482,23 +514,36 @@ function PhotoCard({ photo }) {
 function InitialSplash({ onComplete }) {
   const [prog, setProg] = useState(0)
   useEffect(() => {
-    const timer = setInterval(() => setProg(p => p < 100 ? p + 2 : p), 40)
-    const end = setTimeout(onComplete, 4000)
-    const sfx = setTimeout(playCrispShutter, 1500)
+    const timer = setInterval(() => setProg(p => p < 100 ? p + 2 : p), 30)
+    const end = setTimeout(onComplete, 3500)
+    const sfx = setTimeout(playCrispShutter, 1200)
     return () => { clearInterval(timer); clearTimeout(end); clearTimeout(sfx); }
   }, [onComplete])
   return (
-    <motion.div exit={{ opacity: 0 }} className="splash">
+    <motion.div exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }} className="splash">
       <motion.div 
-        animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
       >
         <PDDLogo />
       </motion.div>
       <div className="loader-container-refined">
-        <div className="loader-fill-refined" style={{width: `${prog}%`}} />
+        <motion.div 
+          className="loader-fill-refined" 
+          initial={{ width: 0 }}
+          animate={{ width: `${prog}%` }}
+          transition={{ ease: "linear" }}
+        />
       </div>
-      <p className="splash-sub-refined">CRAFTING YOUR LEGACY</p>
+      <motion.p 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 0.5] }}
+        transition={{ duration: 2, repeat: Infinity }}
+        className="splash-sub-refined"
+      >
+        CRAFTING YOUR LEGACY
+      </motion.p>
     </motion.div>
   )
 }
@@ -507,12 +552,28 @@ function LandingPage({ onEnter }) {
   const [name, setName] = useState('')
   return (
     <div className="landing">
-      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="landing-card glass">
+      <motion.div 
+        initial={{ y: 40, opacity: 0 }} 
+        animate={{ y: 0, opacity: 1 }} 
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="landing-card glass"
+      >
         <PDDLogo />
-        <h1>TwelveTwo Gallery</h1>
-        <p>Identify yourself to enter the archive.</p>
-        <input type="text" className="form-input" placeholder="Your Name" value={name} onChange={e => setName(e.target.value)} />
-        <button className="btn-primary w-full" onClick={() => name && onEnter({name})}>Discover</button>
+        <h1>TwelveTwo</h1>
+        <p>Enter your name to explore the archive.</p>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <input 
+            type="text" 
+            className="form-input" 
+            placeholder="Identity" 
+            value={name} 
+            onChange={e => setName(e.target.value)} 
+            onKeyDown={e => e.key === 'Enter' && name && onEnter({name})}
+          />
+        </div>
+        <button className="btn-primary w-full" onClick={() => name && onEnter({name})}>
+          Discover Archive
+        </button>
       </motion.div>
     </div>
   )
