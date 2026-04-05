@@ -447,8 +447,6 @@ function App() {
               <button onClick={() => setIsLoginModalOpen(false)}>Cancel</button>
               <button className="btn-primary" onClick={() => { 
                 const expected = import.meta.env.VITE_ADMIN_PASSWORD || '122';
-                console.log('Login attempt passcode:', password);
-                console.log('Expected passcode:', expected);
                 if(password === expected) { setIsAdmin(true); setIsLoginModalOpen(false); setView('admin'); } else alert('Wrong code!'); 
               }}>Enter</button>
             </div>
