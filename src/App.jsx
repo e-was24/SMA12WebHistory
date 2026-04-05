@@ -232,10 +232,19 @@ function App() {
     fetchPhotos()
   }
 
-  const deleteStudent = async (id) => {
+  const deleteStudent = async (id, photoUrl) => {
     if (!confirm('Hapus siswa ini?')) return
-    await supabase.from('students').delete().eq('id', id)
-    fetchStudents()
+    try {
+      if (photoUrl && photoUrl.includes('supabase.co/storage')) {
+        const path = photoUrl.split('/class-photos/')[1]
+        if (path) await supabase.storage.from('class-photos').remove([path])
+      }
+      const tableToUse = (await supabase.from('students').select('id').limit(1)).error ? 'participants' : 'students'
+      await supabase.from(tableToUse).delete().eq('id', id)
+      fetchStudents()
+    } catch (err) {
+      console.error('Error deleting student:', err)
+    }
   }
 
   const handleLogout = () => {
@@ -462,7 +471,7 @@ function App() {
                             <p>{s.name}</p>
                             <small className={s.gender === 'cewek' ? 'text-pink' : 'text-blue'}>{s.gender}</small>
                           </div>
-                          <button onClick={() => deleteStudent(s.id)} className="delete-btn"><Trash2 size={16}/></button>
+                           <button onClick={() => deleteStudent(s.id, s.photo_url)} className="delete-btn"><Trash2 size={16}/></button>
                         </div>
                       ))
                     }
