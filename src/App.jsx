@@ -43,18 +43,20 @@ const ChattingSVG = () => (
 )
 
 const PhotoCollage = ({ photos }) => {
-  const displayPhotos = photos.length > 0 ? [...photos, ...photos].slice(0, 15) : []
+  // Use more photos for a richer collage effect
+  const displayPhotos = photos.length > 0 ? [...photos, ...photos, ...photos].slice(0, 30) : []
   return (
     <div className="photo-collage">
       {displayPhotos.map((p, i) => (
-        <motion.img 
+        <motion.div 
           key={`${p.id}-${i}`}
-          src={p.url} 
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 0.15, scale: 1 }}
-          transition={{ duration: 1, delay: i * 0.1 }}
-          className="collage-img"
-        />
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 0.15, y: 0 }}
+          transition={{ duration: 1, delay: i * 0.05 }}
+          className="collage-item"
+        >
+          <img src={p.url} alt="" className="collage-img" />
+        </motion.div>
       ))}
     </div>
   )
@@ -114,8 +116,18 @@ function App() {
   }
 
   const fetchStudents = async () => {
-    const { data, error } = await supabase.from('students').select('*').order('is_teacher', { ascending: false }).order('attendance_no', { ascending: true })
+    // Try 'students' first, then 'participants' as fallback
+    let { data, error } = await supabase.from('students').select('*').order('is_teacher', { ascending: false }).order('attendance_no', { ascending: true })
+    
+    if (error && error.code === 'PGRST116') { // PGRST116 is often table not found
+       console.log('Table students not found, trying participants...')
+       const fallback = await supabase.from('participants').select('*').order('is_teacher', { ascending: false }).order('attendance_no', { ascending: true })
+       data = fallback.data
+       error = fallback.error
+    }
+
     if (data) setStudents(data)
+    if (error) console.error('Error fetching students:', error)
   }
 
   useEffect(() => {
@@ -161,7 +173,9 @@ function App() {
         photo_url = supabase.storage.from('class-photos').getPublicUrl(fileName).data.publicUrl
       }
       
-      const { error: insertError } = await supabase.from('students').insert([{
+      const tableToUse = (await supabase.from('students').select('id').limit(1)).error ? 'participants' : 'students'
+      
+      const { error: insertError } = await supabase.from(tableToUse).insert([{
         name: newStudent.name,
         attendance_no: parseInt(newStudent.attendance_no) || 0,
         gender: newStudent.gender,
