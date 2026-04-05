@@ -940,8 +940,9 @@ function App() {
             {loading ? (
               <div className="loading-state">
                 <PhotoCollage photos={photos} />
-                <div style={{ position: "relative", zIndex: 1 }}>
-                  Syncing Cloud...
+                <div className="loading-content-refined" style={{ zIndex: 1 }}>
+                  <div className="spinner-large"></div>
+                  <div className="loading-text-glow">Syncing Cloud...</div>
                 </div>
               </div>
             ) : filter === "Presensi" ? (
