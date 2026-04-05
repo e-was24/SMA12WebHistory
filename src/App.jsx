@@ -174,8 +174,17 @@ function App() {
     setVisitor({ name: '', photo: null })
   }
 
-  if (showSplash) return <InitialSplash onComplete={() => setShowSplash(false)} />
-  if (!visitor.name) return <LandingPage onEnter={(v) => { setVisitor(v); localStorage.setItem('gallery_visitor', JSON.stringify(v)); }} />
+  // Background Image for Splash/Landing
+  const [bgImage, setBgImage] = useState('')
+  useEffect(() => {
+    if (photos.length > 0) {
+      const randomPhoto = photos[Math.floor(Math.random() * photos.length)]
+      setBgImage(randomPhoto.url)
+    }
+  }, [photos])
+
+  if (showSplash) return <InitialSplash onComplete={() => setShowSplash(false)} bg={bgImage} />
+  if (!visitor.name) return <LandingPage onEnter={(v) => { setVisitor(v); localStorage.setItem('gallery_visitor', JSON.stringify(v)); }} bg={bgImage} />
 
   return (
     <div className="app-container">
@@ -415,14 +424,21 @@ function App() {
 
       {isLoginModalOpen && (
         <div className="modal-overlay" onClick={() => setIsLoginModalOpen(false)}>
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="modal glass" onClick={e => e.stopPropagation()}>
-            <h3>Admin Restricted</h3>
-            <input type="password" placeholder="Passcode" className="form-input" value={password} onChange={e => setPassword(e.target.value)} />
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="modal" onClick={e => e.stopPropagation()}>
+            <h3 style={{ textShadow: '0 0 20px rgba(124, 58, 237, 0.5)' }}>Admin Restricted</h3>
+            <p className="text-muted" style={{ marginBottom: '1.5rem', fontSize: '0.9rem' }}>Secure decryption required</p>
+            <input type="password" placeholder="Passcode" className="form-input" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && document.getElementById('login-enter').click()} />
             <div className="modal-btns">
-              <button onClick={() => setIsLoginModalOpen(false)}>Cancel</button>
-              <button className="btn-primary" onClick={() => { 
+              <button className="glass" onClick={() => setIsLoginModalOpen(false)}>Cancel</button>
+              <button id="login-enter" className="btn-primary" onClick={() => { 
                 const expected = import.meta.env.VITE_ADMIN_PASSWORD || '122';
-                if(password === expected) { setIsAdmin(true); setIsLoginModalOpen(false); setView('admin'); } else alert('Wrong code!'); 
+                if(password === expected) { 
+                  setIsAdmin(true); 
+                  setIsLoginModalOpen(false); 
+                  setView('admin'); 
+                } else {
+                  alert(`Wrong code! (Hint: Pastikan server di-restart jika baru mengubah .env)`); 
+                }
               }}>Enter</button>
             </div>
           </motion.div>
@@ -490,7 +506,7 @@ function PhotoCard({ photo }) {
   )
 }
 
-function InitialSplash({ onComplete }) {
+function InitialSplash({ onComplete, bg }) {
   const [prog, setProg] = useState(0)
   useEffect(() => {
     const timer = setInterval(() => setProg(p => p < 100 ? p + 2 : p), 30)
@@ -498,7 +514,11 @@ function InitialSplash({ onComplete }) {
     return () => { clearInterval(timer); clearTimeout(end); }
   }, [onComplete])
   return (
-    <motion.div exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }} className="splash">
+    <motion.div 
+      exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }} 
+      className="splash"
+      style={bg ? { backgroundImage: `url(${bg})` } : {}}
+    >
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -526,10 +546,10 @@ function InitialSplash({ onComplete }) {
   )
 }
 
-function LandingPage({ onEnter }) {
+function LandingPage({ onEnter, bg }) {
   const [name, setName] = useState('')
   return (
-    <div className="landing">
+    <div className="landing" style={bg ? { backgroundImage: `url(${bg})` } : {}}>
       <motion.div 
         initial={{ y: 40, opacity: 0 }} 
         animate={{ y: 0, opacity: 1 }} 
