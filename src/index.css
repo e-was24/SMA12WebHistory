@@ -333,6 +333,39 @@ nav {
   to { transform: rotate(360deg); }
 }
 
+.loading-toastglass {
+  position: fixed;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.8rem 1.5rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  color: #fff;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .loading-toastglass {
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .loading-toastglass {
+    top: 25px;
+    right: 25px;
+  }
+}
+
 .hud-toggle { padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 0.6rem; color: var(--accent); border-radius: 2rem; border-color: var(--accent); }
 
 /* Student Cards */

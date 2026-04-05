@@ -62,6 +62,22 @@ const PhotoCollage = ({ photos }) => {
   )
 }
 
+const LoadingToast = ({ show, message }) => (
+  <AnimatePresence>
+    {show && (
+      <motion.div 
+        initial={{ opacity: 0, y: -20, x: 20 }}
+        animate={{ opacity: 1, y: 0, x: 0 }}
+        exit={{ opacity: 0, y: -20, x: 20 }}
+        className="loading-toastglass"
+      >
+        <div className="spinner"></div>
+        <span>{message}</span>
+      </motion.div>
+    )}
+  </AnimatePresence>
+)
+
 const PDDLogo = () => (
   <motion.div 
     initial={{ scale: 0.9, opacity: 0 }}
@@ -240,6 +256,7 @@ function App() {
 
   return (
     <div className="app-container">
+      <LoadingToast show={loading} message="Sedang memproses data..." />
       <nav>
         <div className="container nav-content">
           <div className="brand" onClick={() => setView('gallery')}>TWELVETWO</div>
