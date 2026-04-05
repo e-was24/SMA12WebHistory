@@ -269,6 +269,12 @@ function App() {
                          }
                        }} />
                      </div>
+                     {newPhoto.url && (
+                       <div className="photo-preview-block glass">
+                         <img src={newPhoto.url} alt="Preview" />
+                         <button type="button" className="remove-preview" onClick={() => setNewPhoto({...newPhoto, url: ''})}><X size={16}/></button>
+                       </div>
+                     )}
                      <button type="submit" disabled={loading} className="btn-primary w-full">Upload Foto</button>
                    </form>
                  ) : (
@@ -305,6 +311,12 @@ function App() {
                          }
                        }} />
                      </div>
+                     {newStudent.photo_url && (
+                       <div className="photo-preview-block glass">
+                         <img src={newStudent.photo_url} alt="Preview" />
+                         <button type="button" className="remove-preview" onClick={() => setNewStudent({...newStudent, photo_url: ''})}><X size={16}/></button>
+                       </div>
+                     )}
                      <button type="submit" disabled={loading} className="btn-primary w-full">Simpan Data</button>
                    </form>
                  )}
