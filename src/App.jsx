@@ -118,65 +118,92 @@ const PhotoCollage = ({ photos }) => {
 
 const LivingLoader = () => (
   <div className="living-loader-wrapper">
-    <svg viewBox="0 0 100 100" className="living-svg">
+    <svg viewBox="0 0 100 100" className="living-svg archive-loader">
       <defs>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
-          <feMerge>
-            <feMergeNode in="coloredBlur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
+        <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
         </filter>
+        <linearGradient id="portal-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="var(--accent-primary)" />
+          <stop offset="100%" stopColor="var(--accent-secondary)" />
+        </linearGradient>
       </defs>
-      {/* Outer Rotating Ring */}
-      <motion.circle
-        cx="50" cy="50" r="45"
-        stroke="var(--accent-primary)"
-        strokeWidth="1.5"
-        strokeDasharray="20 10"
+
+      {/* Futuristic Archive Inbox/Portal */}
+      <motion.rect
+        x="35" y="45" width="30" height="20"
+        rx="2"
         fill="none"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+        stroke="url(#portal-grad)"
+        strokeWidth="2"
+        filter="url(#neon-glow)"
+        initial={{ opacity: 0.5 }}
+        animate={{ 
+          opacity: [0.5, 1, 0.3, 0.8, 0.5],
+          scale: [1, 1.05, 0.98, 1],
+          boxShadow: ["0 0 10px #7c3aed", "0 0 20px #7c3aed"]
+        }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
-      {/* Inner Aperture Blades */}
-      {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-        <motion.path
+      <motion.path
+        d="M35 55 L50 65 L65 55"
+        fill="none"
+        stroke="var(--accent-secondary)"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        animate={{ y: [0, 5, 0] }}
+        transition={{ duration: 1.5, repeat: Infinity }}
+      />
+
+      {/* Floating Data Packets entering the Archive */}
+      {[0, 1, 2, 3].map((i) => (
+        <motion.rect
           key={i}
-          d="M50 20 L65 40 L50 40 Z"
-          fill="var(--accent-secondary)"
-          opacity="0.7"
-          filter="url(#glow)"
-          transform={`rotate(${angle} 50 50)`}
+          width="8" height="6"
+          rx="1"
+          fill="var(--accent-primary)"
+          filter="url(#neon-glow)"
+          initial={{ 
+            opacity: 0,
+            x: i % 2 === 0 ? -20 : 120, // Move from far left/right
+            y: 20 + i * 15,
+            scale: 1.5
+          }}
           animate={{ 
-            opacity: [0.3, 0.8, 0.3],
-            scale: [1, 1.1, 1]
+            opacity: [0, 1, 1, 0],
+            x: 50 - 4, // Goal: Center
+            y: 55 - 3,
+            scale: [1, 0.5, 0]
           }}
           transition={{ 
             duration: 2, 
             repeat: Infinity, 
-            delay: i * 0.2,
-            ease: "easeInOut" 
+            delay: i * 0.5,
+            ease: "circIn" 
           }}
         />
       ))}
-      {/* Central Pulsing Core */}
-      <motion.circle
-        cx="50" cy="50" r="8"
-        fill="white"
-        filter="url(#glow)"
-        animate={{ 
-          scale: [0.8, 1.2, 0.8],
-          opacity: [0.5, 1, 0.5]
-        }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+
+      {/* Scanning Beam */}
+      <motion.line
+        x1="20" y1="0" x2="80" y2="0"
+        stroke="white"
+        strokeWidth="0.5"
+        opacity="0.5"
+        animate={{ y: [20, 80, 20] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
       />
     </svg>
     <motion.div 
       className="loader-text-overlay"
-      animate={{ opacity: [0.5, 1, 0.5] }}
-      transition={{ duration: 1.5, repeat: Infinity }}
+      animate={{ 
+        letterSpacing: ["0.1rem", "0.4rem", "0.1rem"],
+        opacity: [0.3, 1, 0.3] 
+      }}
+      transition={{ duration: 2, repeat: Infinity }}
     >
-      12.2
+      ARCHIVING
     </motion.div>
   </div>
 );
