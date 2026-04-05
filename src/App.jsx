@@ -42,6 +42,24 @@ const ChattingSVG = () => (
   </svg>
 )
 
+const PhotoCollage = ({ photos }) => {
+  const displayPhotos = photos.length > 0 ? [...photos, ...photos].slice(0, 15) : []
+  return (
+    <div className="photo-collage">
+      {displayPhotos.map((p, i) => (
+        <motion.img 
+          key={`${p.id}-${i}`}
+          src={p.url} 
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 0.15, scale: 1 }}
+          transition={{ duration: 1, delay: i * 0.1 }}
+          className="collage-img"
+        />
+      ))}
+    </div>
+  )
+}
+
 const PDDLogo = () => (
   <motion.div 
     initial={{ scale: 0.9, opacity: 0 }}
@@ -132,27 +150,34 @@ function App() {
 
   const handleStudentSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
     try {
       let photo_url = newStudent.photo_url
       if (newStudent.photo_url && newStudent.photo_url.startsWith('data:')) {
         const fileName = `student-${Date.now()}.png`
         const base64Data = newStudent.photo_url.split(',')[1]
         const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0))
-        await supabase.storage.from('class-photos').upload(fileName, binaryData, { contentType: 'image/png' })
+        const { error: uploadError } = await supabase.storage.from('class-photos').upload(fileName, binaryData, { contentType: 'image/png' })
+        if (uploadError) throw uploadError
         photo_url = supabase.storage.from('class-photos').getPublicUrl(fileName).data.publicUrl
       }
-      await supabase.from('students').insert([{
+      
+      const { error: insertError } = await supabase.from('students').insert([{
         name: newStudent.name,
-        attendance_no: parseInt(newStudent.attendance_no),
+        attendance_no: parseInt(newStudent.attendance_no) || 0,
         gender: newStudent.gender,
         photo_url,
         is_teacher: newStudent.is_teacher
       }])
+      
+      if (insertError) throw insertError
+
       setNewStudent({ name: '', attendance_no: '', gender: 'cowok', photo_url: '', is_teacher: false })
-      fetchStudents()
+      await fetchStudents()
       alert('Data siswa disimpan!')
-    } catch (err) { alert(err.message) }
+    } catch (err) { 
+      console.error('Error saving student:', err)
+      alert('Gagal menyimpan: ' + err.message) 
+    }
     finally { setLoading(false) }
   }
 
@@ -183,8 +208,8 @@ function App() {
     }
   }, [photos])
 
-  if (showSplash) return <InitialSplash onComplete={() => setShowSplash(false)} bg={bgImage} />
-  if (!visitor.name) return <LandingPage onEnter={(v) => { setVisitor(v); localStorage.setItem('gallery_visitor', JSON.stringify(v)); }} bg={bgImage} />
+  if (showSplash) return <InitialSplash onComplete={() => setShowSplash(false)} photos={photos} />
+  if (!visitor.name) return <LandingPage onEnter={(v) => { setVisitor(v); localStorage.setItem('gallery_visitor', JSON.stringify(v)); }} photos={photos} />
 
   return (
     <div className="app-container">
@@ -506,7 +531,7 @@ function PhotoCard({ photo }) {
   )
 }
 
-function InitialSplash({ onComplete, bg }) {
+function InitialSplash({ onComplete, photos }) {
   const [prog, setProg] = useState(0)
   useEffect(() => {
     const timer = setInterval(() => setProg(p => p < 100 ? p + 2 : p), 30)
@@ -517,8 +542,8 @@ function InitialSplash({ onComplete, bg }) {
     <motion.div 
       exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }} 
       className="splash"
-      style={bg ? { backgroundImage: `url(${bg})` } : {}}
     >
+      <PhotoCollage photos={photos} />
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -546,10 +571,11 @@ function InitialSplash({ onComplete, bg }) {
   )
 }
 
-function LandingPage({ onEnter, bg }) {
+function LandingPage({ onEnter, photos }) {
   const [name, setName] = useState('')
   return (
-    <div className="landing" style={bg ? { backgroundImage: `url(${bg})` } : {}}>
+    <div className="landing">
+      <PhotoCollage photos={photos} />
       <motion.div 
         initial={{ y: 40, opacity: 0 }} 
         animate={{ y: 0, opacity: 1 }} 
