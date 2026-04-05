@@ -343,7 +343,9 @@ function App() {
                          }
                        }} />
                      </div>
-                     <button type="submit" disabled={loading} className="btn-primary w-full">Upload Foto</button>
+                      <button type="submit" disabled={loading} className="btn-primary w-full">
+                        {loading ? <span className="btn-loading"><span className="spinner"></span> Mengunggah...</span> : 'Upload Foto'}
+                      </button>
                    </form>
                  ) : (
                    <form onSubmit={handleStudentSubmit} className="admin-form">
@@ -392,7 +394,9 @@ function App() {
                          }
                        }} />
                      </div>
-                     <button type="submit" disabled={loading} className="btn-primary w-full">Simpan Data</button>
+                      <button type="submit" disabled={loading} className="btn-primary w-full">
+                        {loading ? <span className="btn-loading"><span className="spinner"></span> Menyimpan...</span> : 'Simpan Data'}
+                      </button>
                    </form>
                  )}
                </div>
