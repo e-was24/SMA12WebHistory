@@ -82,22 +82,36 @@ const ChattingSVG = () => (
 );
 
 const PhotoCollage = ({ photos }) => {
-  // Use more photos for a richer collage effect
   const displayPhotos =
-    photos.length > 0 ? [...photos, ...photos, ...photos].slice(0, 30) : [];
+    photos.length > 0 ? [...photos, ...photos, ...photos].slice(0, 25) : [];
+
   return (
-    <div className="photo-collage">
-      {displayPhotos.map((p, i) => (
-        <motion.div
-          key={`${p.id}-${i}`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 0.15, y: 0 }}
-          transition={{ duration: 1, delay: i * 0.05 }}
-          className="collage-item"
-        >
-          <img src={p.url} alt="" className="collage-img" />
-        </motion.div>
-      ))}
+    <div className="photo-collage-container">
+      <div className="collage-overlay" />
+      {displayPhotos.map((p, i) => {
+        const rotate = (i * 137.5) % 40 - 20; // Scattered rotation
+        const scale = 0.8 + ((i * 7) % 5) * 0.1;
+        const top = (i * 23) % 90;
+        const left = (i * 37) % 90;
+
+        return (
+          <motion.div
+            key={`${p.id}-${i}`}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{
+              opacity: 0.1,
+              scale,
+              rotate,
+              top: `${top}%`,
+              left: `${left}%`,
+            }}
+            transition={{ duration: 2, delay: i * 0.05 }}
+            className="collage-item-abstract"
+          >
+            <img src={p.url} alt="" className="collage-img-abstract" />
+          </motion.div>
+        );
+      })}
     </div>
   );
 };
