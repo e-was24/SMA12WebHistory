@@ -527,6 +527,7 @@ function App() {
                       >
                         <option value="XI-F2">XI-F2</option>
                         <option value="XII-F2">XII-F2</option>
+                        <option value="Aib">Aib</option>
                         <option value="Penghargaan">Penghargaan</option>
                         <option value="Video">Video</option>
                       </select>
@@ -749,6 +750,7 @@ function App() {
                                   >
                                     <option value="XI-F2">XI-F2</option>
                                     <option value="XII-F2">XII-F2</option>
+                                    <option value="Aib">Aib</option>
                                     <option value="Penghargaan">
                                       Penghargaan
                                     </option>
@@ -880,6 +882,7 @@ function App() {
                         "All",
                         "XI-F2",
                         "XII-F2",
+                        "Aib",
                         "Presensi",
                         "Penghargaan",
                         "Video",
