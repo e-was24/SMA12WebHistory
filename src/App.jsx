@@ -260,9 +260,10 @@ function App() {
                 className="menu-backdrop" 
               />
               <motion.div 
-                initial={{ scale: 0, opacity: 0, x: '50%', y: '-50%' }} 
-                animate={{ scale: 1, opacity: 1, x: 0, y: 0 }} 
-                exit={{ scale: 0, opacity: 0, transition: { duration: 0.4, ease: "backIn" } }} 
+                initial={{ x: '100%' }} 
+                animate={{ x: 0 }} 
+                exit={{ x: '100%' }} 
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                 className="pdd-sidebar glass"
               >
                 <div className="sidebar-header">
