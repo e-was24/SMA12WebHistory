@@ -729,103 +729,113 @@ function App() {
                 <h3>
                   {adminTab === "photos" ? "Daftar Foto" : "Daftar Presensi"}
                 </h3>
-                <div className="admin-list">
+                <div className="admin-list-wrap">
                   {adminTab === "photos" ? (
                     photos.length > 0 ? (
-                      photos.map((p) => (
-                        <div key={p.id} className="admin-item glass">
-                          <img src={p.url} alt="" />
-                          <div className="item-info">
-                            <p>{p.caption}</p>
-                            {editingId === p.id ? (
-                              <div className="edit-category-wrap">
-                                <select
-                                  className="form-input mini-select"
-                                  value={editCategory}
-                                  onChange={(e) =>
-                                    setEditCategory(e.target.value)
-                                  }
-                                >
-                                  <option value="XI-F2">XI-F2</option>
-                                  <option value="XII-F2">XII-F2</option>
-                                  <option value="Penghargaan">
-                                    Penghargaan
-                                  </option>
-                                  <option value="Video">Video</option>
-                                </select>
-                                <button
-                                  className="save-btn"
-                                  onClick={() =>
-                                    updatePhotoCategory(p.id, editCategory)
-                                  }
-                                >
-                                  <ChevronRight size={16} />
-                                </button>
-                                <button
-                                  className="cancel-btn"
-                                  onClick={() => setEditingId(null)}
-                                >
-                                  <X size={16} />
-                                </button>
-                              </div>
+                      <div className="admin-list">
+                        {photos.map((p) => (
+                          <div key={p.id} className="admin-item glass">
+                            <img src={p.url} alt="" />
+                            <div className="item-info">
+                              <p>{p.caption}</p>
+                              {editingId === p.id ? (
+                                <div className="edit-category-wrap">
+                                  <select
+                                    className="form-input mini-select"
+                                    value={editCategory}
+                                    onChange={(e) =>
+                                      setEditCategory(e.target.value)
+                                    }
+                                  >
+                                    <option value="XI-F2">XI-F2</option>
+                                    <option value="XII-F2">XII-F2</option>
+                                    <option value="Penghargaan">
+                                      Penghargaan
+                                    </option>
+                                    <option value="Video">Video</option>
+                                  </select>
+                                  <button
+                                    className="save-btn"
+                                    onClick={() =>
+                                      updatePhotoCategory(p.id, editCategory)
+                                    }
+                                  >
+                                    <ChevronRight size={16} />
+                                  </button>
+                                  <button
+                                    className="cancel-btn"
+                                    onClick={() => setEditingId(null)}
+                                  >
+                                    <X size={16} />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="category-row">
+                                  <small>{p.class}</small>
+                                  <button
+                                    className="edit-mini-btn"
+                                    onClick={() => {
+                                      setEditingId(p.id);
+                                      setEditCategory(p.class);
+                                    }}
+                                  >
+                                    <Sliders size={12} />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                            <button
+                              onClick={() => deletePhoto(p.id, p.storage_path)}
+                              className="delete-btn"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <EmptyState
+                        message="Belum ada foto gallery."
+                        icon={ImageOff}
+                      />
+                    )
+                  ) : students.length > 0 ? (
+                    <div className="admin-list">
+                      {students.map((s) => (
+                        <div key={s.id} className="admin-item glass">
+                          <div className="student-avatar-mini">
+                            {s.photo_url ? (
+                              <img src={s.photo_url} alt="" />
+                            ) : s.is_teacher ? (
+                              "🎓"
                             ) : (
-                              <div className="category-row">
-                                <small>{p.class}</small>
-                                <button
-                                  className="edit-mini-btn"
-                                  onClick={() => {
-                                    setEditingId(p.id);
-                                    setEditCategory(p.class);
-                                  }}
-                                >
-                                  <Sliders size={12} />
-                                </button>
-                              </div>
+                              s.attendance_no
                             )}
                           </div>
+                          <div className="item-info">
+                            <p>{s.name}</p>
+                            <small
+                              className={
+                                s.gender === "cewek" ? "text-pink" : "text-blue"
+                              }
+                            >
+                              {s.gender}
+                            </small>
+                          </div>
                           <button
-                            onClick={() => deletePhoto(p.id, p.storage_path)}
+                            onClick={() => deleteStudent(s.id, s.photo_url)}
                             className="delete-btn"
                           >
                             <Trash2 size={16} />
                           </button>
                         </div>
-                      ))
-                    ) : (
-                      <EmptyState message="Belum ada foto gallery." icon={ImageOff} />
-                    )
-                  ) : students.length > 0 ? (
-                    students.map((s) => (
-                      <div key={s.id} className="admin-item glass">
-                        <div className="student-avatar-mini">
-                          {s.photo_url ? (
-                            <img src={s.photo_url} alt="" />
-                          ) : s.is_teacher ? (
-                            "🎓"
-                          ) : (
-                            s.attendance_no
-                          )}
-                        </div>
-                        <div className="item-info">
-                          <p>{s.name}</p>
-                          <small
-                            className={
-                              s.gender === "cewek" ? "text-pink" : "text-blue"
-                            }
-                          >
-                            {s.gender}
-                          </small>
-                        </div>
-                        <button
-                          onClick={() => deleteStudent(s.id, s.photo_url)}
-                          className="delete-btn"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    ))
+                      ))}
+                    </div>
                   ) : (
-                    <EmptyState message="Belum ada data presensi." icon={UserX} />
+                    <EmptyState
+                      message="Belum ada data presensi."
+                      icon={UserX}
+                    />
                   )}
                 </div>
               </div>
@@ -897,18 +907,25 @@ function App() {
               students.length > 0 ? (
                 <PresensiSection students={students} />
               ) : (
-                <EmptyState message="Belum ada data presensi yang terdaftar." icon={UserX} />
+                <EmptyState
+                  message="Belum ada data presensi yang terdaftar."
+                  icon={UserX}
+                />
               )
-            ) : (
+            ) : photos.filter((p) => filter === "All" || p.class === filter)
+                .length > 0 ? (
               <div className="gallery-grid">
-                {photos.filter((p) => filter === "All" || p.class === filter).length > 0 ? (
-                  photos
-                    .filter((p) => filter === "All" || p.class === filter)
-                    .map((photo) => <PhotoCard key={photo.id} photo={photo} />)
-                ) : (
-                  <EmptyState message="Belum ada memori di kategori ini." icon={ImageOff} />
-                )}
+                {photos
+                  .filter((p) => filter === "All" || p.class === filter)
+                  .map((photo) => (
+                    <PhotoCard key={photo.id} photo={photo} />
+                  ))}
               </div>
+            ) : (
+              <EmptyState
+                message="Belum ada memori di kategori ini."
+                icon={ImageOff}
+              />
             )}
           </div>
         )}
