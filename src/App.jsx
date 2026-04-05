@@ -9,7 +9,8 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 
-// --- Helper Functions ---
+// --- Constants & Helpers ---
+const PDD_NUMBERS = [1, 6, 10, 12, 13, 14, 15, 25]
 
 const ChattingSVG = () => (
   <svg viewBox="0 0 120 80" width="120" height="80" className="chatting-svg">
@@ -571,21 +572,34 @@ function PresensiSection({ students }) {
   )
 }
 
-function StudentCard({ student }) {
+const StudentCard = React.memo(({ student }) => {
   const isCute = student.gender === 'cewek'
+  const isPDD = PDD_NUMBERS.includes(Number(student.attendance_no))
+  
   return (
-    <motion.div whileHover={{ y: -8, scale: 1.03 }} className={`student-card ${isCute ? 'card-cute' : 'card-cool'}`}>
+    <motion.div 
+      whileHover={{ y: -5, scale: 1.02 }} 
+      className={`student-card ${isCute ? 'card-cute' : 'card-cool'} ${isPDD ? 'has-pdd' : ''}`}
+    >
       <div className="s-photo">
-        {student.photo_url ? <img src={student.photo_url} alt="" /> : <div className="s-placeholder">{student.is_teacher ? <GraduationCap /> : student.attendance_no}</div>}
+        {student.photo_url ? (
+          <img src={student.photo_url} alt="" loading="lazy" />
+        ) : (
+          <div className="s-placeholder">{student.is_teacher ? <GraduationCap /> : student.attendance_no}</div>
+        )}
+        {isPDD && <div className="pdd-badge">PDD</div>}
       </div>
       <div className="s-details">
         {!student.is_teacher && <span className="s-no">#{student.attendance_no}</span>}
         <h4 className="s-name-text">{student.name}</h4>
-        <div className="s-type">{isCute ? <Heart size={12} fill="#f472b6" /> : <Zap size={12} fill="#60a5fa" />} {isCute ? 'Pretty' : 'Cool'}</div>
+        <div className="s-type">
+          {isCute ? <Heart size={12} fill="#f472b6" /> : <Zap size={12} fill="#60a5fa" />} 
+          {isCute ? 'Pretty' : 'Cool'}
+        </div>
       </div>
     </motion.div>
   )
-}
+})
 
 function PhotoCard({ photo }) {
   return (
