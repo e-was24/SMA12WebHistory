@@ -116,6 +116,98 @@ const PhotoCollage = ({ photos }) => {
   );
 };
 
+const LivingLoader = () => (
+  <div className="living-loader-wrapper">
+    <svg viewBox="0 0 100 100" className="living-svg">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      {/* Outer Rotating Ring */}
+      <motion.circle
+        cx="50" cy="50" r="45"
+        stroke="var(--accent-primary)"
+        strokeWidth="1.5"
+        strokeDasharray="20 10"
+        fill="none"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+      />
+      {/* Inner Aperture Blades */}
+      {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+        <motion.path
+          key={i}
+          d="M50 20 L65 40 L50 40 Z"
+          fill="var(--accent-secondary)"
+          opacity="0.7"
+          filter="url(#glow)"
+          transform={`rotate(${angle} 50 50)`}
+          animate={{ 
+            opacity: [0.3, 0.8, 0.3],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{ 
+            duration: 2, 
+            repeat: Infinity, 
+            delay: i * 0.2,
+            ease: "easeInOut" 
+          }}
+        />
+      ))}
+      {/* Central Pulsing Core */}
+      <motion.circle
+        cx="50" cy="50" r="8"
+        fill="white"
+        filter="url(#glow)"
+        animate={{ 
+          scale: [0.8, 1.2, 0.8],
+          opacity: [0.5, 1, 0.5]
+        }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+      />
+    </svg>
+    <motion.div 
+      className="loader-text-overlay"
+      animate={{ opacity: [0.5, 1, 0.5] }}
+      transition={{ duration: 1.5, repeat: Infinity }}
+    >
+      12.2
+    </motion.div>
+  </div>
+);
+
+const PhotoLightbox = ({ photo, onClose }) => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="lightbox-overlay"
+    onClick={onClose}
+  >
+    <motion.div
+      initial={{ scale: 0.9, y: 20 }}
+      animate={{ scale: 1, y: 0 }}
+      exit={{ scale: 0.9, y: 20 }}
+      className="lightbox-content"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <img src={photo.url} alt="" />
+      <div className="lightbox-info glass">
+        <p>{photo.caption}</p>
+        <span className="tag">{photo.class}</span>
+      </div>
+      <button className="lightbox-close" onClick={onClose}>
+        <X size={24} />
+      </button>
+    </motion.div>
+  </motion.div>
+);
+
 const LoadingToast = ({ show, message }) => (
   <AnimatePresence>
     {show && (
@@ -125,7 +217,7 @@ const LoadingToast = ({ show, message }) => (
         exit={{ opacity: 0, y: -20, x: 20 }}
         className="loading-toastglass"
       >
-        <div className="spinner"></div>
+        <div className="mini-loader"></div>
         <span>{message}</span>
       </motion.div>
     )}
@@ -168,6 +260,8 @@ function App() {
   const [password, setPassword] = useState("");
   const [visitor, setVisitor] = useState({ name: "", photo: null });
   const [loading, setLoading] = useState(true);
+  const [isEntering, setIsEntering] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   // Data States
   const [photos, setPhotos] = useState([]);
@@ -240,7 +334,9 @@ function App() {
 
   useEffect(() => {
     const savedVisitor = localStorage.getItem("gallery_visitor");
-    if (savedVisitor) setVisitor(JSON.parse(savedVisitor));
+    if (savedVisitor) {
+      setVisitor(JSON.parse(savedVisitor));
+    }
     fetchPhotos();
     fetchStudents();
   }, []);
@@ -386,17 +482,46 @@ function App() {
 
   if (showSplash)
     return (
-      <InitialSplash onComplete={() => setShowSplash(false)} photos={photos} />
+      <InitialSplash
+        onComplete={() => {
+          setShowSplash(false);
+          if (visitor.name) {
+            setIsEntering(true);
+            setTimeout(() => setIsEntering(false), 2500);
+          }
+        }}
+        photos={photos}
+      />
     );
+
   if (!visitor.name)
     return (
       <LandingPage
         onEnter={(v) => {
+          setIsEntering(true);
           setVisitor(v);
           localStorage.setItem("gallery_visitor", JSON.stringify(v));
+          setTimeout(() => setIsEntering(false), 2500);
         }}
         photos={photos}
       />
+    );
+
+  if (isEntering)
+    return (
+      <div className="loading-state full-screen">
+        <PhotoCollage photos={photos} />
+        <div className="loading-content-refined" style={{ zIndex: 1 }}>
+          <LivingLoader />
+          <motion.h2
+            className="loading-text-glow"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            LOADING ARCHIVE...
+          </motion.h2>
+        </div>
+      </div>
     );
 
   return (
@@ -941,7 +1066,7 @@ function App() {
               <div className="loading-state">
                 <PhotoCollage photos={photos} />
                 <div className="loading-content-refined" style={{ zIndex: 1 }}>
-                  <div className="spinner-large"></div>
+                  <LivingLoader />
                   <div className="loading-text-glow">Syncing Cloud...</div>
                 </div>
               </div>
@@ -963,7 +1088,11 @@ function App() {
                     filter === "All" ? p.class !== "Aib" : p.class === filter
                   )
                   .map((photo) => (
-                    <PhotoCard key={photo.id} photo={photo} />
+                    <PhotoCard 
+                      key={photo.id} 
+                      photo={photo} 
+                      onSelect={setSelectedPhoto} 
+                    />
                   ))}
               </div>
             ) : (
@@ -1036,6 +1165,14 @@ function App() {
           </motion.div>
         </div>
       )}
+      <AnimatePresence>
+        {selectedPhoto && (
+          <PhotoLightbox 
+            photo={selectedPhoto} 
+            onClose={() => setSelectedPhoto(null)} 
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -1116,12 +1253,15 @@ const StudentCard = React.memo(({ student }) => {
   );
 });
 
-function PhotoCard({ photo }) {
+function PhotoCard({ photo, onSelect }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      whileHover={{ y: -5, scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       className="photo-card glass"
+      onDoubleClick={() => onSelect(photo)}
     >
       <img src={photo.url} alt="" loading="lazy" />
       <div className="photo-meta">
@@ -1155,6 +1295,9 @@ function InitialSplash({ onComplete, photos }) {
       >
         <PDDLogo />
       </motion.div>
+      <div className="living-loader-splash">
+        <LivingLoader />
+      </div>
       <div className="loader-container-refined">
         <motion.div
           className="loader-fill-refined"
