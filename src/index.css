@@ -240,7 +240,11 @@ nav {
   border-color: var(--accent-primary);
 }
 
-.pdd-label { font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; }
+.pdd-label { 
+  font-weight: 800; 
+  font-size: clamp(0.7rem, 2vw, 0.85rem); 
+  letter-spacing: 1px; 
+}
 
 /* Splash & Landing */
 .splash, .landing {

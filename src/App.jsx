@@ -8,59 +8,8 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-// --- Helper Functions ---
-const playShutterSound = () => {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)()
-  const osc = ctx.createOscillator()
-  const gain = ctx.createGain()
-  try {
-    osc.type = 'white' 
-  } catch (e) {
-     // Fallback for browsers that don't support white noise oscillator type directly
-     const bufferSize = 2 * ctx.sampleRate,
-     noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate),
-     output = noiseBuffer.getChannelData(0);
-     for (let i = 0; i < bufferSize; i++) {
-         output[i] = Math.random() * 2 - 1;
-     }
-     const whiteNoise = ctx.createBufferSource();
-     whiteNoise.buffer = noiseBuffer;
-     const filter = ctx.createBiquadFilter();
-     filter.type = 'highpass';
-     filter.frequency.value = 1000;
-     whiteNoise.connect(filter);
-     filter.connect(gain);
-     gain.connect(ctx.destination);
-     gain.gain.setValueAtTime(0.5, ctx.currentTime);
-     gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-     whiteNoise.start();
-     whiteNoise.stop(ctx.currentTime + 0.1);
-     return;
-  }
-}
 
-// Minimal Shutter Sound (Refined)
-const playCrispShutter = () => {
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContext) return;
-  const ctx = new AudioContext();
-  const bufferSize = ctx.sampleRate * 0.1;
-  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-  const noise = ctx.createBufferSource();
-  noise.buffer = buffer;
-  const filter = ctx.createBiquadFilter();
-  filter.type = 'highpass';
-  filter.frequency.value = 2000;
-  const gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.3, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
-  noise.connect(filter);
-  filter.connect(gain);
-  gain.connect(ctx.destination);
-  noise.start();
-}
+// --- Helper Functions ---
 
 const ChattingSVG = () => (
   <svg viewBox="0 0 120 80" width="120" height="80" className="chatting-svg">
@@ -242,7 +191,7 @@ function App() {
             <motion.button 
               whileTap={{ scale: 0.9 }}
               className="camera-menu-btn"
-              onClick={() => { playCrispShutter(); setIsFlashing(true); setTimeout(() => setIsFlashing(false), 150); setIsMenuOpen(!isMenuOpen); }}
+              onClick={() => { setIsFlashing(true); setTimeout(() => setIsFlashing(false), 150); setIsMenuOpen(!isMenuOpen); }}
             >
               <Camera size={24} />
               <span className="pdd-label">PDD</span>
@@ -520,8 +469,7 @@ function InitialSplash({ onComplete }) {
   useEffect(() => {
     const timer = setInterval(() => setProg(p => p < 100 ? p + 2 : p), 30)
     const end = setTimeout(onComplete, 3500)
-    const sfx = setTimeout(playCrispShutter, 1200)
-    return () => { clearInterval(timer); clearTimeout(end); clearTimeout(sfx); }
+    return () => { clearInterval(timer); clearTimeout(end); }
   }, [onComplete])
   return (
     <motion.div exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }} className="splash">
