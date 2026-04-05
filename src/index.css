@@ -454,8 +454,18 @@ nav {
 .admin-list::-webkit-scrollbar { width: 4px; }
 .admin-list::-webkit-scrollbar-track { background: transparent; }
 .admin-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 2px; }
-.admin-item { display: flex; align-items: center; gap: 1rem; padding: 0.8rem; }
-.admin-item img { width: 45px; height: 45px; border-radius: 4px; object-fit: cover; }
+.admin-item { display: flex; align-items: center; gap: 1rem; padding: 0.8rem; border-radius: 1rem; margin-bottom: 0.5rem; }
+.admin-item img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+.category-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem; }
+.edit-mini-btn { background: transparent; border: none; color: var(--accent); cursor: pointer; padding: 2px; opacity: 0.6; transition: 0.2s; }
+.edit-mini-btn:hover { opacity: 1; transform: scale(1.1); }
+.edit-category-wrap { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.4rem; }
+.mini-select { padding: 4px 8px; font-size: 0.8rem; border-radius: 6px; background: rgba(255,255,255,0.1); width: auto; }
+.save-btn, .cancel-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; border-radius: 4px; }
+.save-btn { color: #10b981; }
+.cancel-btn { color: #ef4444; }
+.save-btn:hover { background: rgba(16, 185, 129, 0.1); }
+.cancel-btn:hover { background: rgba(239, 68, 68, 0.1); }
 .student-avatar-mini { width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--accent); }
 
 /* Mobile & Tablet Adaptations */

@@ -92,6 +92,8 @@ function App() {
   const [photos, setPhotos] = useState([])
   const [students, setStudents] = useState([])
   const [filter, setFilter] = useState('All')
+  const [editingId, setEditingId] = useState(null)
+  const [editCategory, setEditCategory] = useState('')
   
   // Scroll Locking
   useEffect(() => {
@@ -158,6 +160,17 @@ function App() {
       alert('Berhasil upload!')
     } catch (err) { alert(err.message) }
     finally { setLoading(false) }
+  }
+
+  const updatePhotoCategory = async (id, newClass) => {
+    setLoading(true)
+    const { error } = await supabase.from('photos').update({ class: newClass }).eq('id', id)
+    if (error) alert(error.message)
+    else {
+      setEditingId(null)
+      fetchPhotos()
+    }
+    setLoading(false)
   }
 
   const handleStudentSubmit = async (e) => {
@@ -388,16 +401,36 @@ function App() {
                  <h3>{adminTab === 'photos' ? 'Daftar Foto' : 'Daftar Presensi'}</h3>
                  <div className="admin-list">
                     {adminTab === 'photos' ? 
-                      photos.map(p => (
-                        <div key={p.id} className="admin-item glass">
-                          <img src={p.url} alt="" />
-                          <div className="item-info">
-                            <p>{p.caption}</p>
-                            <small>{p.class}</small>
-                          </div>
-                          <button onClick={() => deletePhoto(p.id, p.storage_path)} className="delete-btn"><Trash2 size={16}/></button>
-                        </div>
-                      )) : 
+                       photos.map(p => (
+                         <div key={p.id} className="admin-item glass">
+                           <img src={p.url} alt="" />
+                           <div className="item-info">
+                             <p>{p.caption}</p>
+                             {editingId === p.id ? (
+                               <div className="edit-category-wrap">
+                                 <select 
+                                   className="form-input mini-select" 
+                                   value={editCategory} 
+                                   onChange={e => setEditCategory(e.target.value)}
+                                 >
+                                   <option value="XI-F2">XI-F2</option>
+                                   <option value="XII-F2">XII-F2</option>
+                                   <option value="Penghargaan">Penghargaan</option>
+                                   <option value="Video">Video</option>
+                                 </select>
+                                 <button className="save-btn" onClick={() => updatePhotoCategory(p.id, editCategory)}><ChevronRight size={16}/></button>
+                                 <button className="cancel-btn" onClick={() => setEditingId(null)}><X size={16}/></button>
+                               </div>
+                             ) : (
+                               <div className="category-row">
+                                 <small>{p.class}</small>
+                                 <button className="edit-mini-btn" onClick={() => { setEditingId(p.id); setEditCategory(p.class); }}><Sliders size={12}/></button>
+                                </div>
+                             )}
+                           </div>
+                           <button onClick={() => deletePhoto(p.id, p.storage_path)} className="delete-btn"><Trash2 size={16}/></button>
+                         </div>
+                       )) : 
                       students.map(s => (
                         <div key={s.id} className="admin-item glass">
                           <div className="student-avatar-mini">
