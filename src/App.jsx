@@ -144,7 +144,7 @@ function App() {
     if (!newPhoto.url) return alert('Pilih foto dulu!')
     setLoading(true)
     try {
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.png`
+      const fileName = `gallery/${Date.now()}-${Math.random().toString(36).substring(7)}.png`
       const base64Data = newPhoto.url.split(',')[1]
       const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0))
       await supabase.storage.from('class-photos').upload(fileName, binaryData, { contentType: 'image/png' })
